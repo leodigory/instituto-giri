@@ -6,7 +6,7 @@ const firebaseConfig = {
   apiKey: "AIzaSyCkEYlreLoQFqrdN8eKASS20a6DaLpJtYE",
   authDomain: "lista-de-compras-f67aa.firebaseapp.com",
   projectId: "lista-de-compras-f67aa",
-  storageBucket: "lista-de-compras-f67aa.firebasestorage.app",
+  storageBucket: "lista-de-compras-f67aa.appspot.com",
   messagingSenderId: "276613236544",
   appId: "1:276613236544:web:b5419812728802e013dca5",
   measurementId: "G-2HFQ3BGVVF",

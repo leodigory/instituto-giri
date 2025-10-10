@@ -1,0 +1,42 @@
+========================================
+VARIÁVEIS DE AMBIENTE PARA O NETLIFY
+========================================
+
+Copie e cole cada linha no formato abaixo no Netlify:
+
+Key: REACT_APP_FIREBASE_API_KEY
+Value: AIzaSyCkEYlreLoQFqrdN8eKASS20a6DaLpJtYE
+
+Key: REACT_APP_FIREBASE_AUTH_DOMAIN
+Value: lista-de-compras-f67aa.firebaseapp.com
+
+Key: REACT_APP_FIREBASE_PROJECT_ID
+Value: lista-de-compras-f67aa
+
+Key: REACT_APP_FIREBASE_STORAGE_BUCKET
+Value: lista-de-compras-f67aa.appspot.com
+
+Key: REACT_APP_FIREBASE_MESSAGING_SENDER_ID
+Value: 276613236544
+
+Key: REACT_APP_FIREBASE_APP_ID
+Value: 1:276613236544:web:b5419812728802e013dca5
+
+Key: REACT_APP_FIREBASE_MEASUREMENT_ID
+Value: G-2HFQ3BGVVF
+
+Key: REACT_APP_GOOGLE_CLIENT_ID
+Value: 276613236544-o2vmj2qckr31oqiiivg8bh1rggbji194.apps.googleusercontent.com
+
+========================================
+COMO ADICIONAR NO NETLIFY:
+========================================
+
+1. No Netlify, ao criar o novo site, clique em "Show advanced"
+2. Clique em "New variable" para cada variável acima
+3. Cole o "Key" no campo da esquerda
+4. Cole o "Value" no campo da direita
+5. Repita para todas as 8 variáveis
+6. Clique em "Deploy site"
+
+========================================

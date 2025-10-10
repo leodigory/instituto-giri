@@ -1,128 +1,363 @@
-# Teclado Virtual 🎹
+# 💰 Economiza AI - Sistema de Gestão de Vendas
 
 ![React](https://img.shields.io/badge/React-18.2.0-61DAFB?style=for-the-badge&logo=react&logoColor=white)
-![Material-UI](https://img.shields.io/badge/Material--UI-5.15.0-0081CB?style=for-the-badge&logo=mui&logoColor=white)
-![GitHub](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)
+![Firebase](https://img.shields.io/badge/Firebase-9.0+-FFCA28?style=for-the-badge&logo=firebase&logoColor=black)
+![Netlify](https://img.shields.io/badge/Netlify-00C7B7?style=for-the-badge&logo=netlify&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-green?style=for-the-badge)
 
-Bem-vindo ao **Teclado Virtual**, um projeto desenvolvido com React e Material-UI que oferece uma experiência de digitação interativa e responsiva. Este teclado virtual foi projetado para ser funcional, esteticamente agradável e altamente personalizável, com transições suaves, temas claro/escuro, som de tecla, e suporte a diferentes layouts (letras e símbolos).
+Sistema completo de gestão de vendas desenvolvido para o Instituto Giri, com controle de estoque, vendas, promoções automáticas, histórico detalhado e dashboard analítico em tempo real.
 
 ## 📋 Visão Geral
 
-O Teclado Virtual é uma aplicação web que simula um teclado físico, permitindo que os usuários digitem texto em um campo de entrada. Ele foi criado como parte de um portfólio de programação, com o objetivo de demonstrar habilidades em React, Material-UI, CSS responsivo, e boas práticas de desenvolvimento.
+O **Economiza AI** é uma aplicação web moderna e responsiva que permite gerenciar todo o fluxo de vendas de forma eficiente, desde o cadastro de produtos até a finalização da venda com geração de QR Code para rastreamento.
 
 ### 🎯 Funcionalidades Principais
 
-- **Layout Responsivo**: O teclado se adapta a diferentes tamanhos de tela (desktop e celular) com transições suaves e graduais.
-- **Temas Claro/Escuro**: Alterne entre temas claro e escuro com um botão estilizado (ícones de sol e lua).
-- **Som de Tecla**: Cada clique em uma tecla reproduz um som de digitação realista.
-- **Modo de Símbolos**: Alterne entre letras e números/símbolos com o botão `?123`.
-- **Ícones do Material-UI**: Teclas especiais como `Enter`, `Shift`, `Backspace`, e `Space` possuem ícones correspondentes.
-- **Transparência**: O teclado e os botões possuem transparência para um visual moderno.
-- **Transições Suaves**: Todas as mudanças de layout e tema são animadas com transições CSS suaves.
+#### 📊 Dashboard Analítico
+- **Métricas em Tempo Real**: Faturamento diário, mensal e projeções
+- **Gráficos Interativos**: Vendas dos últimos 7 dias com visualização em barras
+- **Top Produtos**: Ranking dos produtos mais vendidos
+- **Taxa de Crescimento**: Cálculo automático de crescimento semanal
+- **Filtros Inteligentes**: Visualização por usuário ou global (para administradores)
+
+#### 🛒 Sistema de Vendas
+- **Fluxo em Etapas**: Cliente → Itens → Pagamento → Troco → Finalização
+- **Autocomplete Inteligente**: Busca de clientes e produtos com sugestões em tempo real
+- **Controle de Estoque**: Validação automática de disponibilidade
+- **Múltiplas Formas de Pagamento**: Suporte a pagamento parcial, pendente ou completo
+- **Gestão de Troco**: Opção de devolver ou doar o troco
+- **QR Code**: Geração automática para rastreamento da venda
+- **Comprovante Digital**: Compartilhamento via WhatsApp ou download
+
+#### 🎁 Sistema de Promoções Automáticas
+- **Tipos de Promoções**:
+  - **Quantidade Total**: Desconto ao atingir X itens no carrinho
+  - **Produto Específico**: Desconto ao comprar X unidades de um produto
+  - **Combo de Produtos**: Desconto ao combinar produtos específicos
+- **Tipos de Desconto**: Percentual (%) ou Valor Fixo (R$)
+- **Período de Validade**: Data de início e fim configuráveis
+- **Aplicação Automática**: Descontos aplicados automaticamente no carrinho
+- **Autocomplete de Produtos**: Seleção de produtos do Firebase para evitar erros
+
+#### 📦 Gestão de Estoque
+- **CRUD Completo**: Criar, visualizar, editar e excluir produtos
+- **Controle de Quantidade**: Atualização automática após vendas
+- **Preços Diferenciados**: Preço de custo e preço de venda
+- **Busca e Filtros**: Localização rápida de produtos
+
+#### 📜 Histórico de Vendas
+- **Filtros Avançados**:
+  - Por período: Hoje, Semana, Mês, Ano
+  - Por status de pagamento: Pago, Parcial, Pendente
+  - Por status de entrega: Entregue, Parcial, Não Entregue
+  - Por cliente ou ID da venda
+- **Scanner QR Code**: Localização rápida de vendas via QR Code
+- **Edição de Vendas**: Atualização de status de pagamento e entrega
+- **Cancelamento**: Registro de motivo e histórico de vendas canceladas
+- **Restauração**: Recuperação de vendas canceladas
+
+#### 👥 Gestão de Usuários
+- **Autenticação Google**: Login seguro via Firebase Auth
+- **Controle de Acesso**: Administradores e usuários comuns
+- **Rastreamento**: Vendas vinculadas ao vendedor responsável
+
+#### 🎨 Interface e UX
+- **Tema Claro/Escuro**: Alternância com persistência
+- **Design Responsivo**: Otimizado para desktop e mobile
+- **Skeleton Loading**: Carregamento estilo YouTube
+- **Animações Suaves**: Transições CSS para melhor experiência
+- **Feedback Visual**: Toasts, badges e indicadores de status
 
 ## 🛠️ Tecnologias Utilizadas
 
-- **React**: Biblioteca JavaScript para construção de interfaces de usuário.
-- **Material-UI (MUI)**: Biblioteca de componentes para estilização e ícones.
-- **CSS**: Estilização responsiva com transições suaves.
-- **Git/GitHub**: Controle de versão e hospedagem do código.
+### Frontend
+- **React 18.2.0**: Biblioteca JavaScript para interfaces
+- **React Router DOM**: Navegação entre páginas
+- **CSS3**: Estilização com variáveis CSS e media queries
+- **HTML5 QR Code**: Scanner e geração de QR Codes
+- **QRCode.react**: Geração de QR Codes
+- **html2canvas**: Captura de tela para compartilhamento
 
-## 📦 Instalação
+### Backend & Database
+- **Firebase 9.0+**:
+  - **Firestore**: Banco de dados NoSQL em tempo real
+  - **Authentication**: Autenticação via Google
+  - **Hosting**: Hospedagem da aplicação
+- **Netlify**: Deploy e CI/CD
 
-Siga os passos abaixo para executar o projeto localmente:
+### Estrutura de Dados
 
-1. **Clone o repositório**:
-   ```bash
-   git clone https://github.com/leodigory/teclado-virtual.git
-   cd teclado-virtual
+#### Coleções Firebase
 
-   Instale as dependências: Certifique-se de ter o Node.js instalado. Em seguida, execute:
-bash
+**Vendas**
+```javascript
+{
+  id: "V1760075791252O6MM4",
+  vendedor: "Leonardo Araujo",
+  cliente: { name: "João Silva", phone: "(11) 99999-9999" },
+  itens: [
+    {
+      id: "item-id",
+      nome: "Cartela Bingo",
+      preco: 5.00,
+      quantidade: 5,
+      pago: true,
+      entregue: false
+    }
+  ],
+  valorTotal: 25.00,
+  valorPago: 25.00,
+  desconto: 2.00,
+  doacao: 0,
+  troco: 0,
+  status: "Pago",
+  statusPagamento: "Pago",
+  deliveryStatus: "Pendente",
+  createdAt: Timestamp,
+  updatedAt: Timestamp
+}
+```
 
+**inventory**
+```javascript
+{
+  id: "item-id",
+  name: "Cartela Bingo",
+  salePrice: 5.00,
+  costPrice: 3.00,
+  quantity: 100,
+  createdAt: Timestamp
+}
+```
+
+**promotions**
+```javascript
+{
+  id: "promo-id",
+  name: "PROMO 5 ITENS",
+  discount: 2.00,
+  discountType: "fixed", // ou "percentage"
+  criterio: [
+    {
+      type: "total_quantity", // ou "product_quantity" ou "product_combo"
+      minQuantity: 5
+    }
+  ],
+  isActive: true,
+  startDate: "2024-01-01",
+  endDate: "2024-12-31",
+  maxDiscount: 10.00
+}
+```
+
+**customers**
+```javascript
+{
+  id: "customer-id",
+  name: "João Silva",
+  phone: "(11) 99999-9999",
+  createdAt: Timestamp
+}
+```
+
+## 📐 Métodos e Cálculos
+
+### Cálculo de Descontos Automáticos
+
+```javascript
+// 1. Verificar critérios da promoção
+if (criterio.type === "total_quantity") {
+  const totalQty = items.reduce((sum, i) => sum + i.quantidadeSelecionada, 0);
+  if (totalQty >= criterio.minQuantity) {
+    // Aplicar desconto
+  }
+}
+
+// 2. Calcular desconto
+if (discountType === "percentage") {
+  discount = subtotal * (discount / 100);
+} else {
+  discount = Math.min(discount, subtotal);
+}
+
+// 3. Aplicar limite máximo
+if (maxDiscount && discount > maxDiscount) {
+  discount = maxDiscount;
+}
+```
+
+### Cálculo de Pagamento por Item
+
+```javascript
+// Ordenar itens do menor para o maior valor
+const itensSorted = items.sort((a, b) => 
+  (a.preco * a.quantidadeSelecionada) - (b.preco * b.quantidadeSelecionada)
+);
+
+// Aplicar desconto no último item
+const itensComDesconto = itensSorted.map((item, index) => {
+  const itemTotal = item.preco * item.quantidadeSelecionada;
+  if (index === itensSorted.length - 1) {
+    return { ...item, valorComDesconto: Math.max(0, itemTotal - desconto) };
+  }
+  return { ...item, valorComDesconto: itemTotal };
+});
+
+// Marcar itens como pagos cumulativamente
+let cumulative = 0;
+const itensComPagamento = itensComDesconto.map((item) => {
+  cumulative += item.valorComDesconto;
+  return { ...item, pago: valorPago >= cumulative };
+});
+```
+
+### Cálculo de Métricas do Dashboard
+
+```javascript
+// Taxa de crescimento semanal
+const lastWeekRevenue = weeklyData.slice(0, 3).reduce((sum, day) => sum + day.revenue, 0);
+const thisWeekRevenue = weeklyData.slice(4, 7).reduce((sum, day) => sum + day.revenue, 0);
+const growthRate = lastWeekRevenue > 0 
+  ? ((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100 
+  : 0;
+
+// Projeção mensal
+const avgDailyRevenue = monthlyCashFlow / currentDay;
+const daysInMonth = new Date(year, month, 0).getDate();
+const projectedRevenue = avgDailyRevenue * daysInMonth;
+```
+
+## 📦 Instalação e Deploy
+
+### Instalação Local
+
+```bash
+# Clone o repositório
+git clone https://github.com/leodigory/Economiza-ai.git
+cd Economiza-ai
+
+# Instale as dependências
 npm install
 
-Adicione o som de tecla (opcional):
-Baixe um arquivo de som de clique de teclado (por exemplo, key-click.mp3) e coloque-o na pasta public/.
-O som será reproduzido automaticamente ao clicar nas teclas.
+# Configure as variáveis de ambiente
+# Crie um arquivo .env na raiz do projeto
+REACT_APP_FIREBASE_API_KEY=sua-api-key
+REACT_APP_FIREBASE_AUTH_DOMAIN=seu-auth-domain
+REACT_APP_FIREBASE_PROJECT_ID=seu-project-id
+REACT_APP_FIREBASE_STORAGE_BUCKET=seu-storage-bucket
+REACT_APP_FIREBASE_MESSAGING_SENDER_ID=seu-sender-id
+REACT_APP_FIREBASE_APP_ID=seu-app-id
 
-Inicie o projeto:
-
-bash
-
+# Inicie o servidor de desenvolvimento
 npm start
+```
 
-O projeto será aberto no seu navegador padrão em http://localhost:3000.
-🚀 Como Usar
-Digite texto:
-Clique nas teclas do teclado virtual para digitar no campo de entrada.
-Use a tecla Enter para adicionar uma nova linha.
-Use a tecla Backspace para apagar o último caractere.
-Use a tecla Space para adicionar um espaço.
-Alterne entre letras e símbolos:
-Clique no botão ?123 para mudar para o modo de números e símbolos.
-Clique no botão ABC para voltar ao modo de letras.
-Mude o tema:
-Clique no botão com o ícone de sol (tema escuro) ou lua (tema claro) para alternar entre os temas.
-Teste a responsividade:
-Redimensione a janela do navegador para ver as transições suaves do layout.
-O teclado se ajusta automaticamente para telas de desktop e celular.
-📐 Estrutura do Projeto
-A estrutura do projeto é organizada da seguinte forma:
+### Deploy no Netlify
 
-teclado-virtual/
-  ├── node_modules/          # Dependências do projeto
-  ├── public/               # Arquivos públicos
-  │   ├── index.html        # Arquivo HTML principal
-  │   └── key-click.mp3     # Som de clique das teclas
-  ├── src/                  # Código-fonte do projeto
-  │   ├── components/       # Componentes React
-  │   │   ├── Key.js        # Componente para cada tecla
-  │   │   └── Keyboard.js   # Componente principal do teclado
-  │   ├── css/              # Estilos CSS
-  │   │   └── Keyboard.css  # Estilos do teclado
-  │   ├── App.js            # Componente principal da aplicação
-  │   ├── App.css           # Estilos do App
-  │   └── index.js          # Ponto de entrada da aplicação
-  ├── package.json          # Configurações e dependências do projeto
-  ├── package-lock.json     # Lockfile das dependências
-  └── README.md             # Documentação do projeto
+1. **Via GitHub**:
+   - Conecte seu repositório GitHub ao Netlify
+   - Configure o build command: `npm run build`
+   - Configure o publish directory: `build`
+   - Adicione as variáveis de ambiente no painel do Netlify
 
-🎨 Estilização e Responsividade
-Transições Suaves: O layout usa transições CSS (transition: all 0.3s ease-in-out) para animar mudanças de tamanho, margem, padding, e cores.
-Responsividade Gradativa: Media queries intermediárias garantem que o layout se ajuste gradualmente entre breakpoints (desktop e celular).
-Transparência: O contêiner, o campo de entrada, e os botões possuem transparência (opacidade de 0.8) para um visual moderno.
-Ícones do Material-UI: Teclas especiais usam ícones do MUI, como KeyboardReturnIcon para Enter e ArrowUpwardIcon para Shift.
-🖥️ Demonstração
-Aqui está uma prévia do teclado virtual em diferentes tamanhos de tela:
+2. **Via CLI**:
+```bash
+# Instale o Netlify CLI
+npm install -g netlify-cli
 
-Desktop:
-Layout fixo com teclas arredondadas e bordas suaves.
-Transições suaves ao redimensionar a tela.
-Celular:
-Layout compacto com teclas bem espaçadas.
-Tecla Space maior para facilitar o uso em telas pequenas.
-📝 Notas Adicionais
-Som de Tecla: Certifique-se de que o arquivo key-click.mp3 está na pasta public/. Você pode substituir o arquivo por outro som de sua preferência.
-Personalização: O projeto é altamente personalizável. Você pode adicionar mais teclas, alterar as cores, ou incluir novos temas.
-Melhorias Futuras:
-Adicionar suporte a múltiplos idiomas (tecla US).
-Implementar um modo de voz para digitação por comando de voz.
-Adicionar animações de clique nas teclas.
-📜 Licença
-Este projeto está licenciado sob a MIT License. Sinta-se à vontade para usá-lo, modificá-lo e distribuí-lo conforme necessário.
+# Faça login
+netlify login
 
-🤝 Contribuições
-Contribuições são bem-vindas! Se você tiver sugestões, melhorias ou correções, siga os passos abaixo:
+# Deploy
+netlify deploy --prod
+```
 
-Faça um fork do repositório.
-Crie uma branch para sua feature (git checkout -b feature/nova-feature).
-Faça commit das suas alterações (git commit -m "Adiciona nova feature").
-Envie para o repositório remoto (git push origin feature/nova-feature).
-Abra um Pull Request.
-📧 Contato
-Se você tiver dúvidas ou precisar de ajuda, entre em contato comigo:
+### Deploy no Firebase Hosting
 
-GitHub: leodigory
-E-mail: leodigory@gmail.com
-Feito com 💻 e ☕ por Leonardo Araujo.
+```bash
+# Instale o Firebase CLI
+npm install -g firebase-tools
+
+# Faça login
+firebase login
+
+# Inicialize o projeto
+firebase init hosting
+
+# Build e deploy
+npm run build
+firebase deploy --only hosting
+```
+
+## 🎨 Estrutura do Projeto
+
+```
+Economiza_AI/
+├── public/
+│   ├── index.html
+│   ├── favicon.ico
+│   └── key-click.mp3
+├── src/
+│   ├── components/
+│   │   ├── Dashboard.js          # Dashboard analítico
+│   │   ├── SalesCreation.js      # Criação de vendas
+│   │   ├── SalesHistory.js       # Histórico de vendas
+│   │   ├── Inventory.js          # Gestão de estoque
+│   │   ├── PromotionsManager.js  # Gerenciador de promoções
+│   │   ├── CanceledSales.js      # Vendas canceladas
+│   │   ├── UsersManager.js       # Gestão de usuários
+│   │   └── AccountView.js        # Perfil do usuário
+│   ├── models/
+│   │   ├── Customer.js           # Modelo de cliente
+│   │   ├── Promotion.js          # Modelo de promoção
+│   │   └── Sale.js               # Modelo de venda
+│   ├── firebase/
+│   │   └── config.js             # Configuração Firebase
+│   ├── hooks/
+│   │   ├── useFirebase.js        # Hook Firebase
+│   │   └── useSales.js           # Hook de vendas
+│   ├── utils/
+│   │   └── qrCode.js             # Utilitários QR Code
+│   ├── App.jsx                   # Componente principal
+│   ├── App.css                   # Estilos globais
+│   └── index.js                  # Entry point
+├── firebase.json                 # Config Firebase
+├── netlify.toml                  # Config Netlify
+├── package.json
+└── README.md
+```
+
+## 🚀 Funcionalidades Futuras
+
+- [ ] Relatórios em PDF
+- [ ] Integração com WhatsApp Business API
+- [ ] Sistema de notificações push
+- [ ] Backup automático de dados
+- [ ] Modo offline com sincronização
+- [ ] Dashboard de métricas avançadas
+- [ ] Sistema de metas e comissões
+- [ ] Integração com impressora térmica
+
+## 📜 Licença
+
+Este projeto está licenciado sob a MIT License.
+
+## 🤝 Contribuições
+
+Contribuições são bem-vindas! Para contribuir:
+
+1. Fork o projeto
+2. Crie uma branch (`git checkout -b feature/nova-feature`)
+3. Commit suas mudanças (`git commit -m 'Adiciona nova feature'`)
+4. Push para a branch (`git push origin feature/nova-feature`)
+5. Abra um Pull Request
+
+## 📧 Contato
+
+**Leonardo Araujo**
+- GitHub: [@leodigory](https://github.com/leodigory)
+- Email: leodigory@gmail.com
+
+---
+
+Desenvolvido com 💻 e ☕ por Leonardo Araujo para o Instituto Giri

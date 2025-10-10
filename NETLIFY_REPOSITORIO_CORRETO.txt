@@ -1,0 +1,76 @@
+========================================
+NETLIFY - SELECIONAR REPOSITÓRIO CORRETO
+========================================
+
+✅ REPOSITÓRIO CORRETO:
+   https://github.com/leodigory/Economiza-ai
+
+✅ ÚLTIMO COMMIT:
+   923965e - "100% - Build final com Firebase config correto"
+
+========================================
+PASSO A PASSO NO NETLIFY:
+========================================
+
+1. DELETE O SITE ANTIGO COMPLETAMENTE
+   - Site settings → Danger zone → Delete site
+
+2. CRIE NOVO SITE
+   - Add new site → Import an existing project
+   - Deploy with GitHub
+
+3. SELECIONE O REPOSITÓRIO CORRETO
+   ⚠️ ATENÇÃO: Procure por "Economiza-ai" (com hífen)
+   ✅ Selecione: leodigory/Economiza-ai
+   ❌ NÃO selecione outros repositórios!
+
+4. VERIFIQUE AS CONFIGURAÇÕES
+   Build command: npm run build
+   Publish directory: build
+   
+5. CLIQUE EM "DEPLOY"
+
+========================================
+SE AINDA APARECER VERSÃO ERRADA:
+========================================
+
+Pode ser que você tenha DOIS repositórios:
+- Um com o projeto antigo (lista de compras)
+- Um com o projeto novo (Economiza AI)
+
+SOLUÇÃO:
+1. No GitHub, acesse: https://github.com/leodigory
+2. Veja TODOS os seus repositórios
+3. Identifique qual tem o código antigo
+4. No Netlify, certifique-se de conectar ao repositório CERTO
+
+========================================
+ALTERNATIVA: DEPLOY MANUAL
+========================================
+
+Se continuar com problema, faça deploy manual:
+
+1. Abra o terminal na pasta do projeto
+2. Execute:
+
+npm install -g netlify-cli
+netlify login
+netlify deploy --prod --dir=build
+
+3. Siga as instruções
+4. Quando perguntar "Publish directory", digite: build
+5. Confirme o deploy
+
+========================================
+VERIFICAR SE O BUILD ESTÁ CORRETO:
+========================================
+
+Abra o arquivo:
+d:\Trabalhos e Projetos\PROGRAMAR\Economiza_AI\build\index.html
+
+Deve conter:
+<title>Economiza AI - Sistema de Vendas</title>
+
+Se não tiver, rode: npm run build
+
+========================================

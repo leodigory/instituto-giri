@@ -1,0 +1,95 @@
+========================================
+DEPLOY CORRETO NO NETLIFY - PASSO A PASSO
+========================================
+
+🔴 PROBLEMA: Netlify está mostrando versão antiga (lista de compras)
+✅ SOLUÇÃO: Deletar site antigo e criar novo do zero
+
+========================================
+PASSO 1: DELETAR SITE ANTIGO
+========================================
+
+1. Acesse: https://app.netlify.com
+2. Clique no site antigo (lista de compras)
+3. Vá em "Site settings" (menu lateral esquerdo)
+4. Role até o final da página
+5. Procure "Danger zone" (zona vermelha)
+6. Clique em "Delete site"
+7. Digite o nome do site para confirmar
+8. Confirme a exclusão
+
+⚠️ IMPORTANTE: Certifique-se de deletar o site COMPLETAMENTE!
+
+========================================
+PASSO 2: CRIAR NOVO SITE
+========================================
+
+1. Volte ao dashboard do Netlify
+2. Clique em "Add new site"
+3. Escolha "Import an existing project"
+4. Clique em "Deploy with GitHub"
+5. Autorize o Netlify (se necessário)
+6. Procure e selecione: "leodigory/Economiza-ai"
+
+========================================
+PASSO 3: CONFIGURAR BUILD
+========================================
+
+O Netlify vai detectar automaticamente:
+✅ Build command: npm run build
+✅ Publish directory: build
+✅ Node version: 18
+
+NÃO MUDE NADA! Está correto!
+
+========================================
+PASSO 4: DEPLOY
+========================================
+
+1. Clique em "Deploy leodigory/Economiza-ai"
+2. Aguarde 2-3 minutos
+3. Quando terminar, clique no link do site
+
+========================================
+PASSO 5: VERIFICAR
+========================================
+
+✅ Deve aparecer: "Sistema de Vendas Instituto Giri"
+✅ Deve ter: Dashboard, Estoque, Vendas, Histórico, Conta
+❌ NÃO deve aparecer: "Faça login para salvar suas listas"
+
+========================================
+SE AINDA APARECER A VERSÃO ANTIGA:
+========================================
+
+1. No Netlify, vá em "Deploys"
+2. Clique em "Trigger deploy"
+3. Escolha "Clear cache and deploy site"
+4. Aguarde novo build
+
+========================================
+ALTERNATIVA: DEPLOY MANUAL VIA CLI
+========================================
+
+Se nada funcionar, use o CLI:
+
+1. Abra o terminal na pasta do projeto
+2. Execute:
+   npm install -g netlify-cli
+   netlify login
+   netlify deploy --prod --dir=build
+
+3. Siga as instruções na tela
+
+========================================
+OBSERVAÇÕES IMPORTANTES:
+========================================
+
+✅ O build está correto (main.a996f960.js)
+✅ O Firebase config está correto
+✅ O título está correto: "Economiza AI - Sistema de Vendas"
+✅ Todos os arquivos estão no GitHub
+
+O problema é APENAS cache do Netlify ou site antigo!
+
+========================================

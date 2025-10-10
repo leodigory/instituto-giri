@@ -1,0 +1,309 @@
+/* ===== GLOBAL APP STYLES ===== */
+
+/* CSS Variables - Light Theme (Default) */
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --secondary: #10b981;
+  --accent: #f59e0b;
+  --danger: #ef4444;
+  --success: #22c55e;
+  
+  --bg-main: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-input: #ffffff;
+  --bg-overlay: rgba(0, 0, 0, 0.5);
+  
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --text-muted: #94a3b8;
+  --text-inverse: #ffffff;
+  
+  --border-light: #e2e8f0;
+  --border-medium: #cbd5e1;
+  --border-focus: var(--primary);
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  
+  --radius-sm: 6px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+  --radius-xl: 16px;
+  --radius-full: 9999px;
+  
+  --space-xs: 0.25rem;
+  --space-sm: 0.5rem;
+  --space-md: 1rem;
+  --space-lg: 1.5rem;
+  --space-xl: 2rem;
+  
+  --font-xs: 0.75rem;
+  --font-sm: 0.875rem;
+  --font-base: 1rem;
+  --font-lg: 1.125rem;
+  --font-xl: 1.25rem;
+  --font-2xl: 1.5rem;
+  --font-3xl: 1.875rem;
+  
+  --transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  --transition-slow: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  --header-height: 70px;
+  --nav-height: 80px;
+}
+
+/* Dark Theme */
+[data-theme="dark"] {
+  --bg-main: #0f172a;
+  --bg-card: #1e293b;
+  --bg-input: #334155;
+  --bg-overlay: rgba(0, 0, 0, 0.8);
+  
+  --text-primary: #f1f5f9;
+  --text-secondary: #cbd5e1;
+  --text-muted: #94a3b8;
+  
+  --border-light: #334155;
+  --border-medium: #475569;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.4);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.4);
+}
+
+/* ===== BASE STYLES ===== */
+* {
+  box-sizing: border-box;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: var(--transition);
+  overflow-x: hidden;
+}
+
+/* ===== APP LAYOUT ===== */
+.app {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-main);
+}
+
+/* ===== HEADER ===== */
+.app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--header-height);
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 var(--space-md);
+}
+
+.app-header h1 {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--primary);
+  margin: 0;
+  text-align: center;
+}
+
+[data-theme="dark"] .app-header h1 {
+  color: #60a5fa;
+}
+
+/* ===== MAIN CONTENT ===== */
+.app-content {
+  flex: 1;
+  margin-top: var(--header-height);
+  margin-bottom: var(--nav-height);
+  padding: var(--space-md);
+  min-height: calc(100vh - var(--header-height) - var(--nav-height));
+}
+
+/* ===== BOTTOM NAVIGATION ===== */
+.app-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: var(--nav-height);
+  background: var(--bg-card);
+  border-top: 1px solid var(--border-light);
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: var(--space-sm) 0;
+}
+
+.nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  padding: var(--space-sm);
+  border-radius: var(--radius-md);
+  text-decoration: none;
+  color: var(--text-muted);
+  transition: var(--transition);
+  min-width: 60px;
+  min-height: 60px;
+}
+
+.nav-item:hover,
+.nav-item.active {
+  color: var(--primary);
+  background: rgba(37, 99, 235, 0.1);
+  transform: translateY(-2px);
+}
+
+.nav-icon {
+  font-size: var(--font-xl);
+}
+
+.nav-label {
+  font-size: var(--font-xs);
+  font-weight: 600;
+  text-align: center;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Small Mobile (320px - 480px) */
+@media (max-width: 480px) {
+  .app-header h1 {
+    font-size: var(--font-lg);
+  }
+  
+  .app-content {
+    padding: var(--space-sm);
+  }
+  
+  .nav-item {
+    min-width: 50px;
+    min-height: 50px;
+    padding: var(--space-xs);
+  }
+  
+  .nav-icon {
+    font-size: var(--font-lg);
+  }
+  
+  .nav-label {
+    font-size: 10px;
+  }
+}
+
+/* Large Mobile (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .app-content {
+    padding: var(--space-md);
+  }
+}
+
+/* Tablet (769px - 1024px) */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .app-content {
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--space-lg);
+  }
+}
+
+/* Desktop (1025px+) */
+@media (min-width: 1025px) {
+  .app-content {
+    max-width: 1200px;
+    margin-left: auto;
+    margin-right: auto;
+    padding: var(--space-xl);
+  }
+  
+  .app-header h1 {
+    font-size: var(--font-2xl);
+  }
+  
+  .nav-item {
+    min-width: 80px;
+    min-height: 70px;
+  }
+  
+  .nav-icon {
+    font-size: var(--font-2xl);
+  }
+  
+  .nav-label {
+    font-size: var(--font-sm);
+  }
+}
+
+/* ===== TOUCH OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  .nav-item {
+    min-height: 64px;
+    min-width: 64px;
+  }
+  
+  .nav-icon {
+    font-size: var(--font-xl);
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media (prefers-contrast: high) {
+  :root {
+    --border-light: #000000;
+    --border-medium: #000000;
+  }
+  
+  [data-theme="dark"] {
+    --border-light: #ffffff;
+    --border-medium: #ffffff;
+  }
+}
+
+/* ===== SAFE AREAS (iOS) ===== */
+@supports (padding: max(0px)) {
+  .app-header {
+    padding-top: max(var(--space-md), env(safe-area-inset-top));
+    height: calc(var(--header-height) + max(0px, env(safe-area-inset-top)));
+  }
+  
+  .app-content {
+    margin-top: calc(var(--header-height) + max(0px, env(safe-area-inset-top)));
+    margin-bottom: calc(var(--nav-height) + max(0px, env(safe-area-inset-bottom)));
+  }
+  
+  .app-nav {
+    padding-bottom: max(var(--space-sm), env(safe-area-inset-bottom));
+    height: calc(var(--nav-height) + max(0px, env(safe-area-inset-bottom)));
+  }
+}

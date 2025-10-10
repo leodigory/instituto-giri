@@ -1,0 +1,682 @@
+/* ===== ACCOUNT VIEW - MODERN DESIGN ===== */
+
+.account-container {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  transition: var(--transition);
+  min-height: 100%;
+}
+
+/* ===== LOADING STATE ===== */
+.loading-spinner {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  gap: var(--space-lg);
+}
+
+.spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid rgba(99, 102, 241, 0.1);
+  border-top: 4px solid var(--primary);
+  border-radius: var(--radius-full);
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+[data-theme="dark"] .spinner {
+  border: 4px solid rgba(255, 255, 255, 0.1);
+  border-top: 4px solid #60a5fa;
+}
+
+.loading-spinner p {
+  color: var(--text-secondary);
+  font-weight: 500;
+}
+
+/* ===== LOGGED IN CONTENT ===== */
+.account-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  max-width: 100%;
+}
+
+/* ===== PROFILE CARD ===== */
+.profile-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+  position: relative;
+}
+
+.profile-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.profile-header {
+  padding: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-md);
+  text-align: center;
+}
+
+.avatar-container {
+  position: relative;
+  display: inline-block;
+}
+
+.avatar {
+  width: 140px;
+  height: 140px;
+  border-radius: var(--radius-full);
+  object-fit: cover;
+  border: 4px solid var(--bg-card);
+  box-shadow: var(--shadow-lg);
+  transition: var(--transition);
+}
+
+.avatar:hover {
+  transform: scale(1.05);
+  box-shadow: var(--shadow-xl);
+}
+
+.status-indicator {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  width: 20px;
+  height: 20px;
+  background: var(--secondary);
+  border: 3px solid var(--bg-card);
+  border-radius: var(--radius-full);
+  animation: pulse 2s infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.profile-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  align-items: center;
+}
+
+.profile-name {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.profile-email {
+  font-size: var(--font-base);
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.profile-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
+  padding: var(--space-xs) var(--space-md);
+  background: linear-gradient(135deg, var(--secondary), #059669);
+  color: var(--text-inverse);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  box-shadow: var(--shadow-sm);
+}
+
+/* ===== SETTINGS CARD ===== */
+.settings-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  padding: var(--space-lg);
+}
+
+.settings-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-lg) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.setting-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-sm);
+  background: var(--bg-main);
+  border: 1px solid var(--border-light);
+  transition: var(--transition);
+}
+
+.setting-item:hover {
+  background: var(--bg-card);
+  border-color: var(--primary);
+  transform: translateX(4px);
+  box-shadow: var(--shadow-sm);
+}
+
+.setting-item:last-child {
+  margin-bottom: 0;
+}
+
+.setting-info {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.setting-label {
+  font-weight: 600;
+  color: var(--text-primary);
+  font-size: var(--font-base);
+}
+
+.setting-description {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+}
+
+/* ===== THEME TOGGLE BUTTON ===== */
+.theme-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--primary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  min-width: 100px;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--primary-dark);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.theme-toggle-btn:active {
+  transform: translateY(0);
+}
+
+.theme-icon {
+  font-size: var(--font-lg);
+}
+
+.theme-text {
+  font-size: var(--font-sm);
+}
+
+/* ===== STATUS BADGES ===== */
+.status-badge {
+  padding: var(--space-xs) var(--space-md);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  text-align: center;
+  min-width: 100px;
+}
+
+.status-badge.verified {
+  background: linear-gradient(135deg, var(--secondary), #059669);
+  color: var(--text-inverse);
+}
+
+.status-badge.admin {
+  background: linear-gradient(135deg, var(--accent), #d97706);
+  color: var(--text-inverse);
+}
+
+.account-type-badge {
+  padding: var(--space-xs) var(--space-md);
+  background: var(--primary);
+  color: var(--text-inverse);
+  border-radius: var(--radius-full);
+  font-size: var(--font-sm);
+  font-weight: 600;
+  min-width: 100px;
+  text-align: center;
+}
+
+/* ===== ACTIONS CARD ===== */
+.actions-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  border: 1px solid var(--border-light);
+  padding: var(--space-lg);
+}
+
+.actions-title {
+  font-size: var(--font-xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-lg) 0;
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-md);
+  margin-bottom: var(--space-sm);
+  border: none;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  transition: var(--transition);
+  text-align: left;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-light);
+}
+
+.action-btn:last-child {
+  margin-bottom: 0;
+}
+
+.action-btn.primary {
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--text-inverse);
+}
+
+.action-btn.secondary {
+  background: linear-gradient(135deg, var(--secondary), #059669);
+  color: var(--text-inverse);
+}
+
+.action-btn.tertiary {
+  background: linear-gradient(135deg, var(--accent), #d97706);
+  color: var(--text-inverse);
+}
+
+.action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+
+.action-btn:active {
+  transform: translateY(0);
+}
+
+.action-icon {
+  font-size: var(--font-2xl);
+  flex-shrink: 0;
+}
+
+.action-content {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+  flex: 1;
+}
+
+.action-label {
+  font-weight: 700;
+  font-size: var(--font-lg);
+}
+
+.action-description {
+  font-size: var(--font-sm);
+  opacity: 0.9;
+}
+
+/* ===== LOGOUT SECTION ===== */
+.logout-section {
+  display: flex;
+  justify-content: center;
+  padding: var(--space-lg) 0;
+}
+
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-xl);
+  background: var(--bg-card);
+  color: var(--danger);
+  border: 2px solid var(--danger);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+}
+
+.logout-btn:hover {
+  background: var(--danger);
+  color: var(--text-inverse);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.logout-btn:active {
+  transform: translateY(0);
+}
+
+.logout-icon {
+  font-size: var(--font-lg);
+}
+
+/* ===== LOGIN CONTENT ===== */
+.login-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.login-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  padding: var(--space-xl);
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.login-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary), var(--secondary));
+}
+
+.login-header {
+  margin-bottom: var(--space-xl);
+}
+
+.login-icon {
+  font-size: 4rem;
+  margin-bottom: var(--space-lg);
+  filter: grayscale(0.2);
+}
+
+.login-card h1 {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-sm) 0;
+}
+
+.login-card p {
+  color: var(--text-secondary);
+  margin: 0;
+  font-size: var(--font-base);
+}
+
+.google-login-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-md);
+  width: 100%;
+  padding: var(--space-lg) var(--space-xl);
+  background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-full);
+  font-size: var(--font-lg);
+  font-weight: 700;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.google-login-btn:hover {
+  background: linear-gradient(135deg, var(--primary-dark), var(--primary));
+  transform: translateY(-3px);
+  box-shadow: var(--shadow-xl);
+}
+
+.google-login-btn:active {
+  transform: translateY(-1px);
+}
+
+.google-icon {
+  font-size: var(--font-xl);
+}
+
+.login-footer {
+  border-top: 1px solid var(--border-light);
+  padding-top: var(--space-lg);
+}
+
+.login-footer p {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+  margin: 0;
+}
+
+/* ===== RESPONSIVE DESIGN ===== */
+
+/* Small Mobile (320px - 480px) */
+@media (max-width: 480px) {
+  .profile-header {
+    padding: var(--space-md);
+  }
+  
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .profile-name {
+    font-size: var(--font-xl);
+  }
+  
+  .settings-card,
+  .actions-card {
+    padding: var(--space-md);
+  }
+  
+  .setting-item {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    min-height: 60px;
+  }
+  
+  .setting-info {
+    flex: 1;
+    text-align: left;
+  }
+  
+  .theme-toggle-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 100px;
+    font-size: var(--font-sm);
+    gap: var(--space-xs);
+    flex-shrink: 0;
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .status-badge,
+  .account-type-badge {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 100px;
+    font-size: var(--font-sm);
+    flex-shrink: 0;
+    padding: var(--space-sm) var(--space-md);
+  }
+  
+  .action-btn {
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-md);
+    padding: var(--space-md);
+    min-height: 60px;
+    text-align: center;
+  }
+  
+  .action-icon {
+    flex-shrink: 0;
+    font-size: var(--font-2xl);
+  }
+  
+  .action-content {
+    align-items: center;
+    text-align: center;
+  }
+  
+  .login-card {
+    margin: var(--space-md);
+    padding: var(--space-lg);
+  }
+  
+  .login-icon {
+    font-size: 3rem;
+  }
+  
+  .google-login-btn {
+    padding: var(--space-md) var(--space-lg);
+    font-size: var(--font-base);
+  }
+}
+
+/* Large Mobile (481px - 768px) */
+@media (min-width: 481px) and (max-width: 768px) {
+  .setting-item {
+    flex-wrap: wrap;
+    gap: var(--space-sm);
+  }
+  
+  .theme-toggle-btn,
+  .status-badge,
+  .account-type-badge {
+    flex-shrink: 0;
+  }
+}
+
+/* Desktop (1025px+) */
+@media (min-width: 1025px) {
+  .account-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  .profile-header {
+    flex-direction: row;
+    text-align: left;
+    gap: var(--space-xl);
+  }
+  
+  .profile-info {
+    align-items: flex-start;
+  }
+  
+  .avatar {
+    width: 120px;
+    height: 120px;
+  }
+  
+  .action-btn {
+    padding: var(--space-xl);
+  }
+  
+  .action-icon {
+    font-size: var(--font-3xl);
+  }
+}
+
+/* ===== TOUCH OPTIMIZATIONS ===== */
+@media (hover: none) and (pointer: coarse) {
+  .theme-toggle-btn,
+  .action-btn,
+  .logout-btn,
+  .google-login-btn {
+    min-height: 48px;
+  }
+  
+  .setting-item {
+    min-height: 60px;
+  }
+}
+
+/* ===== ACCESSIBILITY ===== */
+@media (prefers-reduced-motion: reduce) {
+  .avatar,
+  .status-indicator,
+  .spinner {
+    animation: none;
+  }
+  
+  .theme-toggle-btn:hover,
+  .action-btn:hover,
+  .logout-btn:hover,
+  .google-login-btn:hover {
+    transform: none;
+  }
+}
+
+/* ===== HIGH CONTRAST MODE ===== */
+@media (prefers-contrast: high) {
+  .profile-card,
+  .settings-card,
+  .actions-card,
+  .login-card {
+    border-width: 2px;
+  }
+  
+  .theme-toggle-btn,
+  .action-btn,
+  .logout-btn,
+  .google-login-btn {
+    border: 2px solid currentColor;
+  }
+}

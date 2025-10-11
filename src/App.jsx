@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import {
   BrowserRouter as Router,
   Routes,
   Route,
   NavLink,
+  useLocation,
 } from "react-router-dom";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth } from "./firebase/config";
 import "./App.css";
 import Dashboard from "./components/Dashboard";
 import Inventory from "./components/Inventory";
@@ -15,41 +18,99 @@ import SalesView from "./components/SalesView";
 import TestSales from "./components/TestSales";
 import AccountView from "./components/AccountView";
 import ProgressBar from "./components/ProgressBar";
+import ProtectedRoute from "./components/ProtectedRoute";
 
-function App() {
+function AppContent() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const location = useLocation();
+
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme") || "light";
-    document.documentElement.setAttribute("data-theme", savedTheme);
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setIsAuthenticated(!!user);
+    });
+    return () => unsubscribe();
   }, []);
+
+  const showNavigation = isAuthenticated && location.pathname !== "/conta";
+
   return (
-    <Router>
-      <div className="app">
-        {/* Top Header */}
+    <div className="app">
+      {/* Top Header - apenas se autenticado */}
+      {isAuthenticated && (
         <header className="app-header">
           <h1>Sistema de Vendas Instituto Giri</h1>
         </header>
+      )}
 
-        {/* Main Content */}
-        <div className="app-content">
-          <Routes>
-            <Route path="/" element={<Dashboard />} />
-            <Route path="/estoque" element={<Inventory />} />
-            <Route path="/vendas" element={<SalesCreation />} />
-            <Route path="/historico" element={<SalesHistory />} />
-            <Route path="/conta" element={<AccountView />} />
-            <Route path="/view" element={<SalesView />} />
-            <Route path="/test" element={<TestSales />} />
-            <Route path="/account" element={<AccountView />} />
-            <Route
-              path="/progress"
-              element={
+      {/* Main Content */}
+      <div className="app-content">
+        <Routes>
+          {/* Rota pública - Login */}
+          <Route path="/conta" element={<AccountView />} />
+          <Route path="/account" element={<AccountView />} />
+
+          {/* Rotas protegidas */}
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/estoque"
+            element={
+              <ProtectedRoute>
+                <Inventory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/vendas"
+            element={
+              <ProtectedRoute>
+                <SalesCreation />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/historico"
+            element={
+              <ProtectedRoute>
+                <SalesHistory />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/view"
+            element={
+              <ProtectedRoute>
+                <SalesView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/test"
+            element={
+              <ProtectedRoute>
+                <TestSales />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/progress"
+            element={
+              <ProtectedRoute>
                 <ProgressBar progress={75} label="Progresso de Vendas" />
-              }
-            />
-          </Routes>
-        </div>
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </div>
 
-        {/* Bottom Navigation */}
+      {/* Bottom Navigation - apenas se autenticado */}
+      {showNavigation && (
         <nav className="app-nav">
           <NavLink
             to="/"
@@ -87,7 +148,20 @@ function App() {
             <span className="nav-label">Conta</span>
           </NavLink>
         </nav>
-      </div>
+      )}
+    </div>
+  );
+}
+
+function App() {
+  useEffect(() => {
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  }, []);
+
+  return (
+    <Router>
+      <AppContent />
     </Router>
   );
 }

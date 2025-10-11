@@ -1,0 +1,64 @@
+========================================
+CONFIGURAR DOMÍNIO NO FIREBASE
+========================================
+
+ERRO: auth/unauthorized-domain
+CAUSA: O domínio do Netlify não está autorizado no Firebase
+
+========================================
+SOLUÇÃO - PASSO A PASSO:
+========================================
+
+1. Acesse o Firebase Console:
+   https://console.firebase.google.com/
+
+2. Selecione o projeto: lista-de-compras-f67aa
+
+3. No menu lateral, clique em:
+   Authentication (Autenticação)
+
+4. Clique na aba:
+   Settings (Configurações) → Authorized domains (Domínios autorizados)
+
+5. Clique em "Add domain" (Adicionar domínio)
+
+6. Adicione o domínio do Netlify:
+   - Se o URL for: https://instituto-giri.netlify.app
+   - Adicione: instituto-giri.netlify.app
+   
+   OU
+   
+   - Se o URL for: https://seu-site.netlify.app
+   - Adicione: seu-site.netlify.app
+
+7. Clique em "Add" (Adicionar)
+
+8. Aguarde alguns segundos e teste novamente
+
+========================================
+DOMÍNIOS QUE DEVEM ESTAR AUTORIZADOS:
+========================================
+
+✅ localhost (para desenvolvimento)
+✅ lista-de-compras-f67aa.firebaseapp.com (domínio padrão)
+✅ SEU-DOMINIO.netlify.app (domínio do Netlify)
+
+========================================
+EXEMPLO:
+========================================
+
+Se seu site no Netlify é:
+https://instituto-giri.netlify.app
+
+Adicione no Firebase:
+instituto-giri.netlify.app
+
+========================================
+APÓS ADICIONAR:
+========================================
+
+1. Recarregue a página do Netlify (F5)
+2. Tente fazer login com Google novamente
+3. Deve funcionar! ✅
+
+========================================

@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import {
   GoogleAuthProvider,
   signInWithPopup,
   signOut,
   onAuthStateChanged,
 } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 import PromotionsManager from "./PromotionsManager";
 import CanceledSales from "./CanceledSales";
 import UsersManager from "./UsersManager";
@@ -13,6 +14,7 @@ import "./AccountView.css";
 
 const AccountView = () => {
   const [user, setUser] = useState(null);
+  const [userRole, setUserRole] = useState("user");
   const [loading, setLoading] = useState(true);
   const [showPromotions, setShowPromotions] = useState(false);
   const [showCanceled, setShowCanceled] = useState(false);
@@ -22,13 +24,32 @@ const AccountView = () => {
   );
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      if (currentUser) {
+        await loadUserRole(currentUser.email);
+      }
       setLoading(false);
     });
 
     return () => unsubscribe();
   }, []);
+
+  const loadUserRole = async (email) => {
+    try {
+      const usersQuery = query(collection(db, "users"), where("email", "==", email));
+      const snapshot = await getDocs(usersQuery);
+      if (!snapshot.empty) {
+        const userData = snapshot.docs[0].data();
+        setUserRole(userData.role || "user");
+      } else {
+        setUserRole("user");
+      }
+    } catch (error) {
+      console.error("Erro ao carregar role do usuário:", error);
+      setUserRole("user");
+    }
+  };
 
   const toggleTheme = () => {
     const currentTheme = document.documentElement.getAttribute("data-theme") || "light";
@@ -118,11 +139,15 @@ const AccountView = () => {
               <div className="setting-info">
                 <span className="setting-label">Tipo de Usuário</span>
                 <span className="setting-description">
-                  Acesso total ao sistema
+                  {userRole === "admin" ? "Acesso total ao sistema" :
+                   userRole === "gerente" ? "Acesso de gerenciamento" :
+                   "Acesso básico ao sistema"}
                 </span>
               </div>
-              <div className="status-badge admin">
-                👑 Administrador
+              <div className={`status-badge ${userRole}`}>
+                {userRole === "admin" ? "👑 Administrador" :
+                 userRole === "gerente" ? "📊 Gerente" :
+                 "👤 Usuário"}
               </div>
             </div>
 
@@ -138,33 +163,37 @@ const AccountView = () => {
           </div>
 
           {/* Actions Section */}
-          <div className="actions-card">
-            <h2 className="actions-title">🛠️ Ações Rápidas</h2>
-            
-            <button className="action-btn primary" onClick={() => setShowUsers(true)}>
-              <span className="action-icon">👥</span>
-              <div className="action-content">
-                <span className="action-label">Gerenciar Usuários</span>
-                <span className="action-description">Adicionar ou remover usuários</span>
-              </div>
-            </button>
+          {(userRole === "admin" || userRole === "gerente") && (
+            <div className="actions-card">
+              <h2 className="actions-title">🛠️ Ações Rápidas</h2>
+              
+              {userRole === "admin" && (
+                <button className="action-btn primary" onClick={() => setShowUsers(true)}>
+                  <span className="action-icon">👥</span>
+                  <div className="action-content">
+                    <span className="action-label">Gerenciar Usuários</span>
+                    <span className="action-description">Adicionar ou remover usuários</span>
+                  </div>
+                </button>
+              )}
 
-            <button className="action-btn secondary" onClick={() => setShowPromotions(true)}>
-              <span className="action-icon">🎯</span>
-              <div className="action-content">
-                <span className="action-label">Promoções</span>
-                <span className="action-description">Configurar ofertas e descontos</span>
-              </div>
-            </button>
+              <button className="action-btn secondary" onClick={() => setShowPromotions(true)}>
+                <span className="action-icon">🎯</span>
+                <div className="action-content">
+                  <span className="action-label">Promoções</span>
+                  <span className="action-description">Configurar ofertas e descontos</span>
+                </div>
+              </button>
 
-            <button className="action-btn tertiary" onClick={() => setShowCanceled(true)}>
-              <span className="action-icon">🗑️</span>
-              <div className="action-content">
-                <span className="action-label">Cancelamentos</span>
-                <span className="action-description">Ver vendas canceladas</span>
-              </div>
-            </button>
-          </div>
+              <button className="action-btn tertiary" onClick={() => setShowCanceled(true)}>
+                <span className="action-icon">🗑️</span>
+                <div className="action-content">
+                  <span className="action-label">Cancelamentos</span>
+                  <span className="action-description">Ver vendas canceladas</span>
+                </div>
+              </button>
+            </div>
+          )}
 
           {/* Logout Section */}
           <div className="logout-section">

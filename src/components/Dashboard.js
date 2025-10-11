@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { collection, query, getDocs, orderBy, limit } from "firebase/firestore";
+import { collection, query, getDocs, orderBy, limit, where } from "firebase/firestore";
 import { db, auth } from "../firebase/config";
+import VendedoresComparison from "./VendedoresComparison";
 import "./Dashboard.css";
 
 const Dashboard = () => {
@@ -22,14 +23,28 @@ const Dashboard = () => {
   const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [viewMode, setViewMode] = useState('usuario');
   const [userRole, setUserRole] = useState('user');
+  const [showComparison, setShowComparison] = useState(false);
 
   useEffect(() => {
-    const user = auth.currentUser;
-    if (user && user.email === '01leonardoaraujo@gmail.com') {
-      setUserRole('admin');
-    }
+    loadUserRole();
     fetchDashboardData();
   }, [viewMode]);
+
+  const loadUserRole = async () => {
+    const user = auth.currentUser;
+    if (user) {
+      try {
+        const usersQuery = query(collection(db, "users"), where("email", "==", user.email));
+        const snapshot = await getDocs(usersQuery);
+        if (!snapshot.empty) {
+          const userData = snapshot.docs[0].data();
+          setUserRole(userData.role || "user");
+        }
+      } catch (error) {
+        console.error("Erro ao carregar role:", error);
+      }
+    }
+  };
 
   const fetchDashboardData = async () => {
     try {
@@ -240,6 +255,14 @@ const Dashboard = () => {
               Global
             </button>
           )}
+          {userRole === 'admin' && viewMode === 'global' && (
+            <button 
+              className="comparison-btn"
+              onClick={() => setShowComparison(true)}
+            >
+              📊 Comparar Vendedores
+            </button>
+          )}
         </div>
         <div className="period-selector">
           <button 
@@ -388,6 +411,11 @@ const Dashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Modal de Comparação */}
+      {showComparison && (
+        <VendedoresComparison onClose={() => setShowComparison(false)} />
+      )}
     </div>
   );
 };

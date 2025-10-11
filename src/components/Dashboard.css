@@ -119,6 +119,25 @@
   color: var(--text-primary);
 }
 
+.comparison-btn {
+  padding: var(--space-sm) var(--space-lg) !important;
+  background: linear-gradient(135deg, var(--secondary), #059669) !important;
+  color: var(--text-inverse) !important;
+  border-radius: var(--radius-full) !important;
+  font-weight: 600 !important;
+  cursor: pointer !important;
+  transition: var(--transition) !important;
+  border: none !important;
+  box-shadow: var(--shadow-md) !important;
+  margin-left: var(--space-sm);
+}
+
+.comparison-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg) !important;
+  background: linear-gradient(135deg, #10b981, var(--secondary)) !important;
+}
+
 .dashboard h1 {
   font-size: var(--font-2xl);
   font-weight: 700;

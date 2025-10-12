@@ -406,6 +406,108 @@
   font-size: var(--font-lg);
 }
 
+/* ===== PENDING APPROVAL ===== */
+.pending-approval {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+}
+
+.pending-card {
+  background: var(--bg-card);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  padding: var(--space-xl);
+  max-width: 500px;
+  width: 100%;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.pending-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #f59e0b, #d97706);
+}
+
+.pending-card.denied::before {
+  background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.pending-icon {
+  font-size: 5rem;
+  margin-bottom: var(--space-lg);
+  animation: pulse 2s infinite;
+}
+
+.pending-card h2 {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0 0 var(--space-md) 0;
+}
+
+.pending-card p {
+  color: var(--text-secondary);
+  margin: 0 0 var(--space-lg) 0;
+  font-size: var(--font-base);
+  line-height: 1.6;
+}
+
+.pending-info {
+  background: var(--bg-main);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  margin-bottom: var(--space-lg);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-xs);
+}
+
+.info-label {
+  font-size: var(--font-sm);
+  color: var(--text-secondary);
+  font-weight: 600;
+}
+
+.info-value {
+  font-size: var(--font-base);
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+.pending-message {
+  font-size: var(--font-sm);
+  color: var(--text-muted);
+  font-style: italic;
+}
+
+.logout-btn-pending {
+  width: 100%;
+  padding: var(--space-md) var(--space-xl);
+  background: var(--bg-main);
+  color: var(--text-primary);
+  border: 2px solid var(--border-light);
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  margin-top: var(--space-lg);
+}
+
+.logout-btn-pending:hover {
+  background: var(--danger);
+  color: white;
+  border-color: var(--danger);
+}
+
 /* ===== LOGIN CONTENT ===== */
 .login-content {
   display: flex;

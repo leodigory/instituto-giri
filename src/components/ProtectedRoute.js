@@ -1,15 +1,35 @@
 import React, { useState, useEffect } from "react";
 import { Navigate } from "react-router-dom";
-import { auth } from "../firebase/config";
+import { auth, db } from "../firebase/config";
 import { onAuthStateChanged } from "firebase/auth";
+import { collection, query, where, getDocs } from "firebase/firestore";
 
 const ProtectedRoute = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [userStatus, setUserStatus] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       setUser(currentUser);
+      
+      if (currentUser) {
+        // Verificar status do usuário
+        try {
+          const usersQuery = query(collection(db, "users"), where("email", "==", currentUser.email));
+          const snapshot = await getDocs(usersQuery);
+          if (!snapshot.empty) {
+            const userData = snapshot.docs[0].data();
+            setUserStatus(userData.status || "approved");
+          } else {
+            setUserStatus("pending");
+          }
+        } catch (error) {
+          console.error("Erro ao verificar status:", error);
+          setUserStatus("pending");
+        }
+      }
+      
       setLoading(false);
     });
 
@@ -43,6 +63,11 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!user) {
+    return <Navigate to="/conta" replace />;
+  }
+
+  // Se o usuário não está aprovado, redirecionar para conta
+  if (userStatus !== "approved") {
     return <Navigate to="/conta" replace />;
   }
 

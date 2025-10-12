@@ -15,6 +15,7 @@ import "./AccountView.css";
 const AccountView = () => {
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState("user");
+  const [userStatus, setUserStatus] = useState("approved");
   const [loading, setLoading] = useState(true);
   const [showPromotions, setShowPromotions] = useState(false);
   const [showCanceled, setShowCanceled] = useState(false);
@@ -42,12 +43,24 @@ const AccountView = () => {
       if (!snapshot.empty) {
         const userData = snapshot.docs[0].data();
         setUserRole(userData.role || "user");
+        setUserStatus(userData.status || "approved");
       } else {
+        // Primeiro login - criar usuário pendente
+        const { addDoc } = await import("firebase/firestore");
+        await addDoc(collection(db, "users"), {
+          name: auth.currentUser.displayName || email.split('@')[0],
+          email: email,
+          role: "user",
+          status: "pending",
+          createdAt: new Date(),
+        });
         setUserRole("user");
+        setUserStatus("pending");
       }
     } catch (error) {
       console.error("Erro ao carregar role do usuário:", error);
       setUserRole("user");
+      setUserStatus("pending");
     }
   };
 
@@ -90,6 +103,39 @@ const AccountView = () => {
   return (
     <div className="account-container">
       {user ? (
+        userStatus === "pending" ? (
+          <div className="pending-approval">
+            <div className="pending-card">
+              <div className="pending-icon">⏳</div>
+              <h2>Ativação Pendente</h2>
+              <p>Você precisa da autorização do administrador para acessar o sistema.</p>
+              <div className="pending-info">
+                <span className="info-label">Conta:</span>
+                <span className="info-value">{user.email}</span>
+              </div>
+              <p className="pending-message">Aguarde a aprovação do administrador. Você será notificado quando seu acesso for liberado.</p>
+              <button className="logout-btn-pending" onClick={handleLogout}>
+                <span>Sair</span>
+              </button>
+            </div>
+          </div>
+        ) : userStatus === "denied" ? (
+          <div className="pending-approval">
+            <div className="pending-card denied">
+              <div className="pending-icon">❌</div>
+              <h2>Acesso Negado</h2>
+              <p>Seu acesso ao sistema não foi permitido pelo administrador.</p>
+              <div className="pending-info">
+                <span className="info-label">Conta:</span>
+                <span className="info-value">{user.email}</span>
+              </div>
+              <p className="pending-message">Entre em contato com o administrador para mais informações.</p>
+              <button className="logout-btn-pending" onClick={handleLogout}>
+                <span>Sair</span>
+              </button>
+            </div>
+          </div>
+        ) : (
         <div className="account-content">
           {/* Profile Section */}
           <div className="profile-card">
@@ -203,6 +249,7 @@ const AccountView = () => {
             </button>
           </div>
         </div>
+        )
       ) : (
         <div className="login-content">
           <div className="login-card">

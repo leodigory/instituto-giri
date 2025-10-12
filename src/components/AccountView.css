@@ -259,8 +259,18 @@
 }
 
 .status-badge.admin {
-  background: linear-gradient(135deg, var(--accent), #d97706);
-  color: var(--text-inverse);
+  background: linear-gradient(135deg, #f59e0b, #d97706);
+  color: #ffffff;
+}
+
+.status-badge.gerente {
+  background: linear-gradient(135deg, #3b82f6, #2563eb);
+  color: #ffffff;
+}
+
+.status-badge.user {
+  background: linear-gradient(135deg, #10b981, #059669);
+  color: #ffffff;
 }
 
 .account-type-badge {

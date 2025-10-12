@@ -22,16 +22,30 @@ import ProtectedRoute from "./components/ProtectedRoute";
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userRole, setUserRole] = useState('user');
   const location = useLocation();
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       setIsAuthenticated(!!user);
+      if (user) {
+        // Carregar role do usuário
+        try {
+          const { collection, query, where, getDocs } = await import('firebase/firestore');
+          const { db } = await import('./firebase/config');
+          const usersQuery = query(collection(db, "users"), where("email", "==", user.email));
+          const snapshot = await getDocs(usersQuery);
+          if (!snapshot.empty) {
+            const userData = snapshot.docs[0].data();
+            setUserRole(userData.role || "user");
+          }
+        } catch (error) {
+          console.error("Erro ao carregar role:", error);
+        }
+      }
     });
     return () => unsubscribe();
   }, []);
-
-  const showNavigation = isAuthenticated && location.pathname !== "/conta";
 
   return (
     <div className="app">
@@ -109,46 +123,51 @@ function AppContent() {
         </Routes>
       </div>
 
-      {/* Bottom Navigation - apenas se autenticado */}
-      {showNavigation && (
-        <nav className="app-nav">
-          <NavLink
-            to="/"
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-          >
-            <span className="nav-icon">🏠</span>
-            <span className="nav-label">Dashboard</span>
-          </NavLink>
-          <NavLink
-            to="/estoque"
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-          >
-            <span className="nav-icon">📦</span>
-            <span className="nav-label">Estoque</span>
-          </NavLink>
-          <NavLink
-            to="/vendas"
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-          >
-            <span className="nav-icon">💰</span>
-            <span className="nav-label">Vendas</span>
-          </NavLink>
-          <NavLink
-            to="/historico"
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-          >
-            <span className="nav-icon">📋</span>
-            <span className="nav-label">Histórico</span>
-          </NavLink>
-          <NavLink
-            to="/conta"
-            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-          >
-            <span className="nav-icon">👤</span>
-            <span className="nav-label">Conta</span>
-          </NavLink>
-        </nav>
-      )}
+      {/* Bottom Navigation - sempre visível */}
+      <nav className="app-nav">
+        {/* Botões padrão - apenas se autenticado */}
+        {isAuthenticated && (
+          <>
+            <NavLink
+              to="/"
+              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+            >
+              <span className="nav-icon">🏠</span>
+              <span className="nav-label">Dashboard</span>
+            </NavLink>
+            <NavLink
+              to="/estoque"
+              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+            >
+              <span className="nav-icon">📦</span>
+              <span className="nav-label">Estoque</span>
+            </NavLink>
+            <NavLink
+              to="/vendas"
+              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+            >
+              <span className="nav-icon">💰</span>
+              <span className="nav-label">Vendas</span>
+            </NavLink>
+            <NavLink
+              to="/historico"
+              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+            >
+              <span className="nav-icon">📋</span>
+              <span className="nav-label">Histórico</span>
+            </NavLink>
+          </>
+        )}
+        
+        {/* Botão Conta - sempre visível */}
+        <NavLink
+          to="/conta"
+          className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+        >
+          <span className="nav-icon">👤</span>
+          <span className="nav-label">Conta</span>
+        </NavLink>
+      </nav>
     </div>
   );
 }

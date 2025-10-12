@@ -131,9 +131,14 @@ body {
 /* ===== MAIN CONTENT ===== */
 .app-content {
   flex: 1;
-  margin-top: var(--header-height);
   margin-bottom: var(--nav-height);
   padding: var(--space-md);
+  min-height: calc(100vh - var(--nav-height));
+}
+
+/* Quando o header está presente (usuário logado) */
+.app:has(.app-header) .app-content {
+  margin-top: var(--header-height);
   min-height: calc(100vh - var(--header-height) - var(--nav-height));
 }
 
@@ -308,8 +313,11 @@ body {
   }
   
   .app-content {
-    margin-top: calc(var(--header-height) + max(0px, env(safe-area-inset-top)));
     margin-bottom: calc(var(--nav-height) + max(0px, env(safe-area-inset-bottom)));
+  }
+  
+  .app:has(.app-header) .app-content {
+    margin-top: calc(var(--header-height) + max(0px, env(safe-area-inset-top)));
   }
   
   .app-nav {

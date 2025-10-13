@@ -246,7 +246,8 @@ const UsersManager = ({ onClose }) => {
                             <span className="user-email">{user.email}</span>
                             <span className={`role-badge ${user.role}`}>
                               {user.role === "admin" ? "👑 Admin" : 
-                               user.role === "gerente" ? "📊 Gerente" : "👤 Usuário"}
+                               user.role === "gerente" ? "📊 Gerente" :
+                               user.role === "voluntario" ? "🤝 Voluntário" : "👤 Usuário"}
                             </span>
                             {isAdmin(user.email) && (
                               <span className="protected-badge">🔒 Protegido</span>
@@ -343,6 +344,7 @@ const UsersManager = ({ onClose }) => {
                 onChange={(e) => setFormData({ ...formData, role: e.target.value })}
               >
                 <option value="user">Usuário</option>
+                <option value="voluntario">Voluntário</option>
                 <option value="gerente">Gerente</option>
                 <option value="admin">Administrador</option>
               </select>

@@ -273,6 +273,11 @@
   color: #ffffff;
 }
 
+.status-badge.voluntario {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: #ffffff;
+}
+
 .account-type-badge {
   padding: var(--space-xs) var(--space-md);
   background: var(--primary);
@@ -791,4 +796,31 @@
   .google-login-btn {
     border: 2px solid currentColor;
   }
+}
+
+/* ===== TUTORIAL BUTTON ===== */
+.tutorial-btn {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: var(--space-md) var(--space-lg);
+  background: var(--secondary);
+  color: var(--text-inverse);
+  border: none;
+  border-radius: var(--radius-full);
+  font-weight: 600;
+  cursor: pointer;
+  transition: var(--transition);
+  box-shadow: var(--shadow-sm);
+  min-width: 100px;
+}
+
+.tutorial-btn:hover {
+  background: #059669;
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+.tutorial-btn:active {
+  transform: translateY(0);
 }

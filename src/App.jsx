@@ -5,6 +5,7 @@ import {
   Route,
   NavLink,
   useLocation,
+  Navigate,
 } from "react-router-dom";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth } from "./firebase/config";
@@ -19,6 +20,7 @@ import TestSales from "./components/TestSales";
 import AccountView from "./components/AccountView";
 import ProgressBar from "./components/ProgressBar";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Ecommerce from "./components/Ecommerce";
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -64,11 +66,20 @@ function AppContent() {
           <Route path="/account" element={<AccountView />} />
 
           {/* Rotas protegidas */}
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
           <Route
-            path="/"
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <Dashboard />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/loja"
+            element={
+              <ProtectedRoute>
+                <Ecommerce />
               </ProtectedRoute>
             }
           />
@@ -126,22 +137,24 @@ function AppContent() {
       {/* Bottom Navigation - sempre visível */}
       <nav className="app-nav">
         {/* Botões padrão - apenas se autenticado */}
-        {isAuthenticated && (
+        {isAuthenticated && (userRole === 'admin' || userRole === 'gerente' || userRole === 'voluntario') && (
           <>
             <NavLink
-              to="/"
+              to="/dashboard"
               className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
             >
               <span className="nav-icon">🏠</span>
               <span className="nav-label">Dashboard</span>
             </NavLink>
-            <NavLink
-              to="/estoque"
-              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-            >
-              <span className="nav-icon">📦</span>
-              <span className="nav-label">Estoque</span>
-            </NavLink>
+            {(userRole === 'admin' || userRole === 'gerente') && (
+              <NavLink
+                to="/estoque"
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                <span className="nav-icon">📦</span>
+                <span className="nav-label">Estoque</span>
+              </NavLink>
+            )}
             <NavLink
               to="/vendas"
               className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
@@ -157,6 +170,17 @@ function AppContent() {
               <span className="nav-label">Histórico</span>
             </NavLink>
           </>
+        )}
+        
+        {/* Botão Loja - para todos os usuários */}
+        {isAuthenticated && (
+          <NavLink
+            to="/loja"
+            className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+          >
+            <span className="nav-icon">🛍️</span>
+            <span className="nav-label">Loja</span>
+          </NavLink>
         )}
         
         {/* Botão Conta - sempre visível */}

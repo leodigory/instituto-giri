@@ -66,6 +66,7 @@ const SalesCreation = ({ onBack }) => {
   // Estados para validação
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
 
   // Estados para toasts e animações
   const [toasts, setToasts] = useState([]);
@@ -771,6 +772,12 @@ const SalesCreation = ({ onBack }) => {
 
   // Finalizar venda
   const finalizeSale = async () => {
+    if (isProcessing) {
+      console.log('Venda já está sendo processada, ignorando clique duplicado');
+      return;
+    }
+    
+    setIsProcessing(true);
     setLoading(true);
     try {
       const { valorTotal, troco } = calculateTotals();
@@ -850,6 +857,7 @@ const SalesCreation = ({ onBack }) => {
       showToast("Erro ao finalizar", "error");
     } finally {
       setLoading(false);
+      setIsProcessing(false);
     }
   };
 
@@ -1845,14 +1853,24 @@ const SalesCreation = ({ onBack }) => {
           )}
 
           {currentStep === 3 && (
-            <button className="nav-button next" onClick={nextStep}>
-              Continuar →
+            <button 
+              className="nav-button finalize" 
+              onClick={nextStep}
+              disabled={isProcessing}
+              style={{ opacity: isProcessing ? 0.6 : 1, cursor: isProcessing ? 'not-allowed' : 'pointer' }}
+            >
+              {isProcessing ? 'Processando...' : 'Finalizar a Venda'}
             </button>
           )}
 
           {currentStep === 4 && (
-            <button className="nav-button finalize" onClick={nextStep}>
-              Finalizar Venda
+            <button 
+              className="nav-button finalize" 
+              onClick={nextStep}
+              disabled={isProcessing}
+              style={{ opacity: isProcessing ? 0.6 : 1, cursor: isProcessing ? 'not-allowed' : 'pointer' }}
+            >
+              {isProcessing ? 'Processando...' : 'Finalizar a Venda'}
             </button>
           )}
 

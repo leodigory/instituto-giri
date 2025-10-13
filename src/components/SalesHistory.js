@@ -121,6 +121,7 @@ const SalesHistory = () => {
               status: saleData.statusPagamento || saleData.status || "Pendente",
               deliveryStatus: saleData.deliveryStatus || "Pendente",
               totalItens: (saleData.itens || []).length,
+              vendedor: saleData.vendedor || "N/A",
               date: saleDate.toLocaleDateString("pt-BR"),
               time: saleDate.toLocaleTimeString("pt-BR", {
                 hour: "2-digit",
@@ -417,6 +418,7 @@ const SalesHistory = () => {
                 <div className="sale-info">
                   <span className="sale-date">{sale.date} • {sale.time}</span>
                   <span className="item-count">📦 {sale.totalItens} itens</span>
+                  <span className="seller-name">👤 {sale.vendedor}</span>
                 </div>
                 <div className="sale-bottom">
                   <div className="sale-total">
@@ -579,6 +581,10 @@ const SalesHistory = () => {
                 <div className="info-row">
                   <span>Cliente:</span>
                   <span>{selectedSale.cliente?.name || "N/A"}</span>
+                </div>
+                <div className="info-row">
+                  <span>Vendedor:</span>
+                  <span>{selectedSale.vendedor || "N/A"}</span>
                 </div>
                 <div className="info-row">
                   <span>Data:</span>

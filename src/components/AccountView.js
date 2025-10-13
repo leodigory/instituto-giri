@@ -187,12 +187,14 @@ const AccountView = () => {
                 <span className="setting-description">
                   {userRole === "admin" ? "Acesso total ao sistema" :
                    userRole === "gerente" ? "Acesso de gerenciamento" :
-                   "Acesso básico ao sistema"}
+                   userRole === "voluntario" ? "Vendedor voluntário" :
+                   "Acesso restrito"}
                 </span>
               </div>
               <div className={`status-badge ${userRole}`}>
                 {userRole === "admin" ? "👑 Administrador" :
                  userRole === "gerente" ? "📊 Gerente" :
+                 userRole === "voluntario" ? "🤝 Voluntário" :
                  "👤 Usuário"}
               </div>
             </div>

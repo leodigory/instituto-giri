@@ -1,29 +1,32 @@
 import React, { useState, useEffect } from "react";
-import { collection, query, getDocs, orderBy, limit, where } from "firebase/firestore";
+import { collection, query, getDocs, where } from "firebase/firestore";
 import { db, auth } from "../firebase/config";
 import VendedoresComparison from "./VendedoresComparison";
+import GiriCoin from "./GiriCoin";
 import "./Dashboard.css";
 
 const Dashboard = () => {
   const [stats, setStats] = useState({
-    totalSales: 0,
-    totalRevenue: 0,
-    totalItems: 0,
-    recentSales: [],
-    dailyCashFlow: 0,
-    monthlyCashFlow: 0,
+    totalPaid: 0,
+    totalDonations: 0,
     todaySales: 0,
+    todayPaid: 0,
+    todayDonations: 0,
     monthSales: 0,
+    monthRevenue: 0,
     weeklyData: [],
-    topProducts: [],
     projectedRevenue: 0,
-    growthRate: 0,
+    projectionHelp: "",
+    giriGold: 0,
+    recentSales: [],
   });
   const [loading, setLoading] = useState(true);
   const [selectedPeriod, setSelectedPeriod] = useState('today');
   const [viewMode, setViewMode] = useState('usuario');
   const [userRole, setUserRole] = useState('user');
   const [showComparison, setShowComparison] = useState(false);
+  const [rankingData, setRankingData] = useState([]);
+  const [showAllRanking, setShowAllRanking] = useState(false);
 
   useEffect(() => {
     loadUserRole();
@@ -55,31 +58,30 @@ const Dashboard = () => {
       const currentMonth = now.getMonth() + 1;
       const currentDay = now.getDate();
 
-      let totalSales = 0;
-      let totalRevenue = 0;
-      let dailyCashFlow = 0;
-      let monthlyCashFlow = 0;
-      let todaySales = 0;
-      let monthSales = 0;
-      const recentSales = [];
-      const weeklyData = [];
-      const productSales = {};
-
-      // Buscar todas as vendas
-      const salesCollectionRef = collection(db, "Vendas");
-      const salesSnapshot = await getDocs(salesCollectionRef);
-      
       const currentUser = auth.currentUser;
       const currentUserName = currentUser ? (currentUser.displayName || currentUser.email) : null;
-      
+
+      let todaySales = 0;
+      let todayPaid = 0;
+      let todayDonations = 0;
+      let monthSales = 0;
+      let monthRevenue = 0;
+      let monthDonations = 0;
+      const weeklyData = [];
+      const recentSales = [];
+      const userGoldMap = {};
+
+      // Buscar todas as vendas
+      const salesSnapshot = await getDocs(collection(db, "Vendas"));
       const allSales = [];
+
       salesSnapshot.forEach((saleDoc) => {
         const saleData = saleDoc.data();
         
         if (viewMode === 'usuario' && saleData.vendedor !== currentUserName) {
           return;
         }
-        
+
         let saleDate;
         try {
           saleDate = saleData.createdAt?.toDate
@@ -90,6 +92,7 @@ const Dashboard = () => {
         } catch {
           saleDate = new Date();
         }
+
         allSales.push({
           id: saleDoc.id,
           ...saleData,
@@ -107,21 +110,14 @@ const Dashboard = () => {
           sale.date.toDateString() === targetDateStr
         );
         
-        let dayRevenue = 0;
+        let dayPaid = 0;
         daySales.forEach(sale => {
-          const saleAmount = sale.valorTotal || 0;
-          dayRevenue += saleAmount;
-          
-          if (sale.itens) {
-            sale.itens.forEach(item => {
-              const productName = item.nome || 'Produto';
-              productSales[productName] = (productSales[productName] || 0) + item.quantidade;
-            });
-          }
+          dayPaid += sale.valorPago || 0;
           
           if (i === 0) {
             todaySales++;
-            dailyCashFlow += saleAmount;
+            todayPaid += sale.valorPago || 0;
+            todayDonations += sale.doacao || 0;
           }
           
           if (recentSales.length < 5) {
@@ -134,7 +130,7 @@ const Dashboard = () => {
         
         weeklyData.push({
           day: targetDate.toLocaleDateString("pt-BR", { weekday: 'short' }),
-          revenue: dayRevenue,
+          revenue: dayPaid,
           sales: daySales.length
         });
       }
@@ -146,46 +142,93 @@ const Dashboard = () => {
       );
       
       thisMonth.forEach(sale => {
-        const saleAmount = sale.valorTotal || 0;
         monthSales++;
-        monthlyCashFlow += saleAmount;
-        totalSales++;
-        totalRevenue += saleAmount;
+        monthRevenue += sale.valorTotal || 0;
+        monthDonations += sale.doacao || 0;
       });
 
-      // Top produtos
-      const topProducts = Object.entries(productSales)
-        .sort(([,a], [,b]) => b - a)
-        .slice(0, 5)
-        .map(([name, quantity]) => ({ name, quantity }));
+      // Calcular Giri Gold
+      // Voluntário: R$ 1 = 1.75 GGs (35% de 5)
+      // Outros: R$ 1 = 5 GGs
+      const giriGoldRate = userRole === 'voluntario' ? 1.75 : 5;
+      const giriGold = Math.floor(monthRevenue * giriGoldRate);
 
-      // Calcular projeção e crescimento
-      const avgDailyRevenue = monthlyCashFlow / currentDay;
+      // Calcular projeção
+      const avgDailyRevenue = monthRevenue / currentDay;
       const daysInMonth = new Date(currentYear, currentMonth, 0).getDate();
       const projectedRevenue = avgDailyRevenue * daysInMonth;
       
-      const lastWeekRevenue = weeklyData.slice(0, 3).reduce((sum, day) => sum + day.revenue, 0);
-      const thisWeekRevenue = weeklyData.slice(4, 7).reduce((sum, day) => sum + day.revenue, 0);
-      const growthRate = lastWeekRevenue > 0 ? ((thisWeekRevenue - lastWeekRevenue) / lastWeekRevenue) * 100 : 0;
+      // Calcular meta diária para atingir projeção
+      const remainingDays = daysInMonth - currentDay;
+      const dailyGoal = remainingDays > 0 ? (projectedRevenue - monthRevenue) / remainingDays : 0;
+      const projectionHelp = remainingDays > 0 
+        ? `Venda ${formatCurrency(dailyGoal)}/dia para atingir a meta!`
+        : "Mês finalizado!";
 
-      // Buscar itens do inventário
-      const itemsQuery = query(collection(db, "inventory"));
-      const itemsSnapshot = await getDocs(itemsQuery);
-      const totalItems = itemsSnapshot.size;
+      // Calcular ranking de todos os usuários (apenas no modo usuário)
+      if (viewMode === 'usuario') {
+        const allUsersSnapshot = await getDocs(collection(db, "users"));
+        const allUsers = allUsersSnapshot.docs.map(doc => ({
+          id: doc.id,
+          ...doc.data()
+        }));
+
+        // Buscar todas as vendas do mês para calcular Giri Gold de cada usuário
+        const allMonthSales = await getDocs(collection(db, "Vendas"));
+        
+        allMonthSales.forEach(saleDoc => {
+          const sale = saleDoc.data();
+          let saleDate;
+          try {
+            saleDate = sale.createdAt?.toDate ? sale.createdAt.toDate() : new Date();
+          } catch {
+            saleDate = new Date();
+          }
+
+          if (saleDate.getMonth() === currentMonth - 1 && saleDate.getFullYear() === currentYear) {
+            const vendedor = sale.vendedor || "Desconhecido";
+            const saleValue = sale.valorTotal || 0;
+            // Buscar role do vendedor para calcular GGs correto
+            const gold = Math.floor(saleValue * 5); // Padrão 5 GGs
+            
+            if (!userGoldMap[vendedor]) {
+              userGoldMap[vendedor] = 0;
+            }
+            userGoldMap[vendedor] += gold;
+          }
+        });
+
+        // Criar ranking
+        const ranking = Object.entries(userGoldMap)
+          .map(([name, gold]) => ({ name, gold }))
+          .sort((a, b) => b.gold - a.gold);
+
+        const totalGold = ranking.reduce((sum, user) => sum + user.gold, 0);
+        
+        const rankingWithPercentage = ranking.map((user, index) => ({
+          ...user,
+          position: index + 1,
+          percentage: totalGold > 0 ? (user.gold / totalGold) * 100 : 0,
+          isCurrentUser: user.name === currentUserName
+        }));
+
+        setRankingData(rankingWithPercentage);
+      }
 
       setStats({
-        totalSales,
-        totalRevenue,
-        totalItems,
-        recentSales,
-        dailyCashFlow,
-        monthlyCashFlow,
+        totalPaid: todayPaid,
+        totalDonations: todayDonations,
         todaySales,
+        todayPaid,
+        todayDonations,
         monthSales,
+        monthRevenue,
+        monthDonations,
         weeklyData,
-        topProducts,
         projectedRevenue,
-        growthRate,
+        projectionHelp,
+        giriGold,
+        recentSales,
       });
     } catch (error) {
       console.error("Erro ao buscar dados do dashboard:", error);
@@ -201,18 +244,29 @@ const Dashboard = () => {
     }).format(value);
   };
 
-  const formatPercent = (value) => {
-    return `${value >= 0 ? '+' : ''}${value.toFixed(1)}%`;
-  };
-
   const getCurrentData = () => {
     switch (selectedPeriod) {
       case 'today':
-        return { sales: stats.todaySales, revenue: stats.dailyCashFlow, label: 'Hoje' };
+        return { 
+          sales: stats.todaySales, 
+          paid: stats.todayPaid,
+          revenue: stats.todaySales > 0 ? stats.todayPaid / stats.todaySales : 0,
+          label: 'Hoje' 
+        };
       case 'month':
-        return { sales: stats.monthSales, revenue: stats.monthlyCashFlow, label: 'Este Mês' };
+        return { 
+          sales: stats.monthSales, 
+          paid: stats.monthRevenue,
+          revenue: stats.monthSales > 0 ? stats.monthRevenue / stats.monthSales : 0,
+          label: 'Este Mês' 
+        };
       default:
-        return { sales: stats.todaySales, revenue: stats.dailyCashFlow, label: 'Hoje' };
+        return { 
+          sales: stats.todaySales, 
+          paid: stats.todayPaid,
+          revenue: stats.todaySales > 0 ? stats.todayPaid / stats.todaySales : 0,
+          label: 'Hoje' 
+        };
     }
   };
 
@@ -225,11 +279,6 @@ const Dashboard = () => {
           <div className="skeleton-card"></div>
         </div>
         <div className="skeleton-chart"></div>
-        <div className="skeleton-list">
-          <div className="skeleton-item"></div>
-          <div className="skeleton-item"></div>
-          <div className="skeleton-item"></div>
-        </div>
       </div>
     );
   }
@@ -238,7 +287,7 @@ const Dashboard = () => {
 
   return (
     <div className="dashboard">
-      {/* Header com seletor de visão */}
+      {/* Header */}
       <div className="dashboard-header">
         <div className="view-selector">
           <button 
@@ -280,6 +329,24 @@ const Dashboard = () => {
         </div>
       </div>
 
+      {/* Card Giri Gold - Destaque no topo para voluntários */}
+      {viewMode === 'usuario' && (
+        <div className="giri-gold-highlight">
+          <div className="metric-card giri-gold-main">
+            <div className="metric-icon">
+              <GiriCoin size={64} />
+            </div>
+            <div className="metric-info">
+              <span className="metric-label">Seu Giri Gold</span>
+              <span className="metric-value" style={{fontSize: 'var(--font-3xl)'}}>{stats.giriGold.toLocaleString()}</span>
+              <span className="metric-help">
+                {userRole === 'voluntario' ? '💰 R$ 1 = 1.75 GGs (35%)' : '💰 R$ 1 = 5 GGs'}
+              </span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Cards principais */}
       <div className="main-stats">
         <div className="stat-card primary">
@@ -287,11 +354,8 @@ const Dashboard = () => {
             <span className="stat-icon">💰</span>
             <span className="stat-label">Faturamento {currentData.label}</span>
           </div>
-          <div className="stat-value">{formatCurrency(currentData.revenue)}</div>
-          <div className="stat-growth positive">
-            <span className="growth-icon">📈</span>
-            <span>{formatPercent(stats.growthRate)}</span>
-          </div>
+          <div className="stat-value">{formatCurrency(currentData.paid)}</div>
+          <div className="stat-subtitle">💵 Valor recebido em dinheiro</div>
         </div>
 
         <div className="stat-card secondary">
@@ -301,7 +365,7 @@ const Dashboard = () => {
           </div>
           <div className="stat-value">{currentData.sales}</div>
           <div className="stat-subtitle">
-            Média: {formatCurrency(currentData.sales > 0 ? currentData.revenue / currentData.sales : 0)}
+            📊 Média por venda: {formatCurrency(currentData.revenue)}
           </div>
         </div>
       </div>
@@ -326,57 +390,49 @@ const Dashboard = () => {
                   <span className="bar-value">{formatCurrency(day.revenue)}</span>
                 </div>
               );
-            })}
-          </div>
+            })}</div>
         </div>
       </div>
 
-      {/* Cards de métricas */}
-      <div className="metrics-grid">
-        <div className="metric-card">
-          <div className="metric-icon">🎯</div>
-          <div className="metric-info">
-            <span className="metric-label">Projeção Mensal</span>
-            <span className="metric-value">{formatCurrency(stats.projectedRevenue)}</span>
+      {/* Ranking Giri Gold - Logo após o destaque */}
+      {viewMode === 'usuario' && rankingData.length > 0 && (
+        <div className="ranking-card">
+          <div className="ranking-header">
+            <h3>🏆 Ranking Giri Gold - Mês Atual</h3>
+            {rankingData.length > 10 && (
+              <button 
+                className="show-all-btn"
+                onClick={() => setShowAllRanking(!showAllRanking)}
+              >
+                {showAllRanking ? 'Ver Top 10' : `Ver Todos (${rankingData.length})`}
+              </button>
+            )}
           </div>
-        </div>
-
-        <div className="metric-card">
-          <div className="metric-icon">📦</div>
-          <div className="metric-info">
-            <span className="metric-label">Produtos</span>
-            <span className="metric-value">{stats.totalItems}</span>
-          </div>
-        </div>
-
-        <div className="metric-card">
-          <div className="metric-icon">📊</div>
-          <div className="metric-info">
-            <span className="metric-label">Total Geral</span>
-            <span className="metric-value">{formatCurrency(stats.totalRevenue)}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Top produtos */}
-      {stats.topProducts.length > 0 && (
-        <div className="top-products-card">
-          <h3>🏆 Produtos Mais Vendidos</h3>
-          <div className="products-list">
-            {stats.topProducts.map((product, index) => (
-              <div key={index} className="product-item">
-                <div className="product-rank">#{index + 1}</div>
-                <div className="product-info">
-                  <span className="product-name">{product.name}</span>
-                  <span className="product-quantity">{product.quantity} vendidos</span>
+          <div className="ranking-list">
+            {(showAllRanking ? rankingData : rankingData.slice(0, 10)).map((user, index) => (
+              <div 
+                key={index} 
+                className={`ranking-item ${user.isCurrentUser ? 'current-user' : ''} ${
+                  index === 0 ? 'first' : index === 1 ? 'second' : index === 2 ? 'third' : ''
+                }`}
+              >
+                <div className="ranking-position">
+                  {index === 0 ? '🥇' : index === 1 ? '🥈' : index === 2 ? '🥉' : `#${user.position}`}
                 </div>
-                <div className="product-bar">
-                  <div 
-                    className="bar-fill" 
-                    style={{ 
-                      width: `${(product.quantity / stats.topProducts[0].quantity) * 100}%` 
-                    }}
-                  ></div>
+                <div className="ranking-info">
+                  <span className="ranking-name">{user.name}</span>
+                  <div className="ranking-bar">
+                    <div 
+                      className="ranking-bar-fill" 
+                      style={{ width: `${user.percentage}%` }}
+                    ></div>
+                  </div>
+                </div>
+                <div className="ranking-stats">
+                  <span className="ranking-gold">
+                    <GiriCoin size={16} /> {user.gold.toLocaleString()}
+                  </span>
+                  <span className="ranking-percentage">{user.percentage.toFixed(1)}%</span>
                 </div>
               </div>
             ))}
@@ -384,25 +440,77 @@ const Dashboard = () => {
         </div>
       )}
 
+      {/* Cards de métricas */}
+      <div className="metrics-grid">
+        <div className="metric-card">
+          <div className="metric-icon">💝</div>
+          <div className="metric-info">
+            <span className="metric-label">Doações {selectedPeriod === 'today' ? 'Hoje' : 'Mês'}</span>
+            <span className="metric-value">
+              {formatCurrency(selectedPeriod === 'today' ? stats.todayDonations : stats.monthDonations)}
+            </span>
+            <span className="metric-help">❤️ Contribuições dos clientes</span>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">📊</div>
+          <div className="metric-info">
+            <span className="metric-label">Total do Mês</span>
+            <span className="metric-value">{formatCurrency(stats.monthRevenue)}</span>
+            <span className="metric-help">📅 Soma de todas as vendas</span>
+          </div>
+        </div>
+
+        <div className="metric-card">
+          <div className="metric-icon">🎯</div>
+          <div className="metric-info">
+            <span className="metric-label">Projeção Mensal</span>
+            <span className="metric-value">{formatCurrency(stats.projectedRevenue)}</span>
+            <span className="metric-help">🔮 Estimativa baseada na média</span>
+          </div>
+        </div>
+
+        <div className="metric-card projection-help">
+          <div className="metric-icon">💡</div>
+          <div className="metric-info">
+            <span className="metric-label">Meta Diária</span>
+            <span className="metric-value" style={{fontSize: 'var(--font-base)'}}>{stats.projectionHelp}</span>
+            <span className="metric-help">🎯 Para atingir a projeção</span>
+          </div>
+        </div>
+      </div>
+
       {/* Vendas recentes */}
       <div className="recent-sales-card">
         <h3>🕐 Vendas Recentes</h3>
         {stats.recentSales.length > 0 ? (
           <div className="sales-list">
-            {stats.recentSales.map((sale) => (
-              <div key={sale.id} className="sale-item">
-                <div className="sale-info">
-                  <span className="sale-id">#{sale.id?.slice(-6)}</span>
-                  <span className="sale-client">
-                    {sale.cliente?.name || "Cliente"}
-                  </span>
-                  <span className="sale-date">{sale.date}</span>
+            {stats.recentSales.map((sale) => {
+              const valorPago = sale.valorPago || 0;
+              const valorTotal = sale.valorTotal || 0;
+              const paymentStatus = valorPago === 0 ? 'unpaid' : valorPago < valorTotal ? 'partial' : 'paid';
+              
+              return (
+                <div key={sale.id} className="sale-item">
+                  <div className="sale-info">
+                    <span className="sale-id">#{sale.id?.slice(-6)}</span>
+                    <span className="sale-client">
+                      {sale.cliente?.name || "Cliente"}
+                    </span>
+                    {viewMode === 'global' && (
+                      <span className="sale-vendor">
+                        👤 {sale.vendedor || "N/A"}
+                      </span>
+                    )}
+                    <span className="sale-date">{sale.date}</span>
+                  </div>
+                  <div className={`sale-amount ${paymentStatus}`}>
+                    {formatCurrency(valorPago)}
+                  </div>
                 </div>
-                <div className="sale-amount">
-                  {formatCurrency(sale.valorTotal)}
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         ) : (
           <div className="no-data">

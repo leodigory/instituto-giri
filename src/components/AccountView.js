@@ -29,6 +29,7 @@ const AccountView = () => {
   const [showPromotions, setShowPromotions] = useState(false);
   const [showCanceled, setShowCanceled] = useState(false);
   const [showUsers, setShowUsers] = useState(false);
+  const [googleCalendarVinculado, setGoogleCalendarVinculado] = useState(false);
   const [isDarkTheme, setIsDarkTheme] = useState(
     document.documentElement.getAttribute("data-theme") === "dark"
   );
@@ -53,6 +54,7 @@ const AccountView = () => {
         const userData = snapshot.docs[0].data();
         setUserRole(userData.role || "user");
         setUserStatus(userData.status || "approved");
+        setGoogleCalendarVinculado(userData.google_calendar_vinculado || false);
       } else {
         // Primeiro login - criar usuário pendente
         const { addDoc } = await import("firebase/firestore");
@@ -83,8 +85,22 @@ const AccountView = () => {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    // Adicionar scope do Google Calendar
+    provider.addScope('https://www.googleapis.com/auth/calendar.events');
+    
     try {
-      await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(auth, provider);
+      
+      // Após login bem-sucedido, inicializar Google Calendar API
+      if (result.user) {
+        try {
+          const { googleCalendarService } = await import('../services/googleCalendarService');
+          await googleCalendarService.inicializar();
+          console.log('✅ Google Calendar API inicializada');
+        } catch (err) {
+          console.log('⚠️ Google Calendar API não disponível');
+        }
+      }
     } catch (error) {
       console.error("Erro no login com Google:", error);
     }
@@ -156,6 +172,11 @@ const AccountView = () => {
                   className="avatar"
                 />
                 <div className="status-indicator"></div>
+                {googleCalendarVinculado && userRole !== 'user' && (
+                  <div className="sync-indicator" title="Google Calendar sincronizado">
+                    🔄
+                  </div>
+                )}
               </div>
               <div className="profile-info">
                 <h1 className="profile-name">{user.displayName || "Usuário"}</h1>

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { agendaService } from '../../services/agendaService';
 import { googleCalendarService } from '../../services/googleCalendarService';
+import { syncCalendarService } from '../../services/syncCalendarService';
 import { auth } from '../../firebase/config';
 import './GestaoViews.css';
 
@@ -30,26 +31,83 @@ const AgendaView = () => {
       const dados = { ...form, criado_por: auth.currentUser?.email || 'desconhecido' };
       
       if (editando) {
+        // EDITAR EVENTO
+        const eventoAntigo = eventos.find(e => e.id === editando);
+        
+        // 1. Atualizar no Firebase
         await agendaService.atualizarEvento(editando, dados);
-      } else {
-        const eventoId = await agendaService.criarEvento(dados);
+        console.log('✅ Evento atualizado no Firebase');
         
-        // Criar no Google Calendar se houver roles além de 'user'
-        const temOutrosRoles = dados.publico_alvo.some(r => r !== 'user');
+        // 2. Buscar usuários sincronizados
+        const usuariosSincronizados = await syncCalendarService.buscarUsuariosSincronizados(dados.publico_alvo);
         
-        if (temOutrosRoles) {
+        // 3. Atualizar no Google Calendar (se existir)
+        if (eventoAntigo?.googleEventId) {
           try {
-            // Tentar criar evento no Google Calendar
             await googleCalendarService.inicializar();
+            // Google Calendar não tem update direto, precisa excluir e recriar
+            await googleCalendarService.excluirEvento(eventoAntigo.googleEventId);
+            const novoGoogleEventId = await googleCalendarService.criarEvento(dados);
+            
+            if (novoGoogleEventId) {
+              await agendaService.atualizarEvento(editando, { googleEventId: novoGoogleEventId });
+              console.log('✅ Evento atualizado no Google Calendar');
+            }
+          } catch (err) {
+            console.log('⚠️ Não foi possível atualizar no Google Calendar');
+          }
+        }
+        
+        // 4. Notificar usuários sobre atualização
+        if (usuariosSincronizados.length > 0) {
+          await syncCalendarService.notificarUsuarios(usuariosSincronizados, { ...dados, acao: 'atualizado' });
+          alert(`✅ Evento atualizado! ${usuariosSincronizados.length} usuário(s) notificado(s).`);
+        } else {
+          alert('✅ Evento atualizado!');
+        }
+      } else {
+        // CRIAR EVENTO
+        // 1. Criar evento no Firebase
+        const eventoId = await agendaService.criarEvento(dados);
+        console.log('✅ Evento criado no Firebase:', eventoId);
+        
+        // 2. Buscar usuários sincronizados do público-alvo
+        const usuariosSincronizados = await syncCalendarService.buscarUsuariosSincronizados(dados.publico_alvo);
+        
+        if (usuariosSincronizados.length > 0) {
+          console.log(`🔄 ${usuariosSincronizados.length} usuários sincronizados encontrados`);
+          
+          // 3. Tentar criar no Google Calendar do usuário atual (se sincronizado)
+          try {
+            await googleCalendarService.inicializar();
+            
+            // Verificar se está autenticado, se não, fazer login
+            if (!googleCalendarService.estaAutenticado()) {
+              console.log('🔑 Solicitando autenticação no Google Calendar...');
+              const loginSucesso = await googleCalendarService.login();
+              
+              if (!loginSucesso) {
+                console.log('⚠️ Usuário cancelou autenticação');
+                throw new Error('Autenticação cancelada');
+              }
+            }
+            
             const googleEventId = await googleCalendarService.criarEvento(dados);
             
             if (googleEventId) {
               await agendaService.atualizarEvento(eventoId, { googleEventId });
-              console.log('Evento sincronizado com Google Calendar');
+              console.log('✅ Evento sincronizado com seu Google Calendar');
             }
           } catch (err) {
-            console.log('Não foi possível sincronizar com Google Calendar:', err.message);
+            console.log('⚠️ Não foi possível sincronizar com seu Google Calendar:', err.message);
           }
+          
+          // 4. Notificar outros usuários sincronizados
+          await syncCalendarService.notificarUsuarios(usuariosSincronizados, dados);
+          
+          alert(`✅ Evento criado! ${usuariosSincronizados.length} usuário(s) sincronizado(s) serão notificado(s).`);
+        } else {
+          alert('✅ Evento criado no Firebase!');
         }
       }
       
@@ -70,20 +128,36 @@ const AgendaView = () => {
   };
 
   const handleExcluir = async (id) => {
-    if (window.confirm('Excluir este evento?')) {
+    if (window.confirm('Excluir este evento? Todos os usuários sincronizados serão notificados.')) {
       try {
         const evento = eventos.find(e => e.id === id);
         
-        // Tentar excluir do Google Calendar
+        // 1. Buscar usuários sincronizados
+        const usuariosSincronizados = await syncCalendarService.buscarUsuariosSincronizados(evento.publico_alvo);
+        
+        // 2. Excluir do Google Calendar
         if (evento?.googleEventId) {
           try {
+            await googleCalendarService.inicializar();
             await googleCalendarService.excluirEvento(evento.googleEventId);
+            console.log('✅ Evento excluído do Google Calendar');
           } catch (err) {
-            console.log('Não foi possível excluir do Google Calendar');
+            console.log('⚠️ Não foi possível excluir do Google Calendar');
           }
         }
         
+        // 3. Excluir do Firebase
         await agendaService.excluirEvento(id);
+        console.log('✅ Evento excluído do Firebase');
+        
+        // 4. Notificar usuários sobre exclusão
+        if (usuariosSincronizados.length > 0) {
+          await syncCalendarService.notificarUsuarios(usuariosSincronizados, { ...evento, acao: 'excluido' });
+          alert(`✅ Evento excluído! ${usuariosSincronizados.length} usuário(s) notificado(s).`);
+        } else {
+          alert('✅ Evento excluído!');
+        }
+        
         carregarEventos();
       } catch (error) {
         console.error('Erro ao excluir evento:', error);

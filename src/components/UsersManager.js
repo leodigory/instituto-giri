@@ -252,14 +252,21 @@ const UsersManager = ({ onClose }) => {
                           <div className="user-info">
                             <h4>{user.name}</h4>
                             <span className="user-email">{user.email}</span>
-                            <span className={`role-badge ${user.role}`}>
-                              {user.role === "admin" ? "👑 Admin" : 
-                               user.role === "gerente" ? "📊 Gerente" :
-                               user.role === "voluntario" ? "🤝 Voluntário" : "👤 Usuário"}
-                            </span>
-                            {isAdmin(user.email) && (
-                              <span className="protected-badge">🔒 Protegido</span>
-                            )}
+                            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                              <span className={`role-badge ${user.role}`}>
+                                {user.role === "admin" ? "👑 Admin" : 
+                                 user.role === "gerente" ? "📊 Gerente" :
+                                 user.role === "voluntario" ? "🤝 Voluntário" : "👤 Usuário"}
+                              </span>
+                              {user.google_calendar_vinculado && user.role !== 'user' && (
+                                <span className="sync-badge" title="Google Calendar sincronizado">
+                                  🔄 Sincronizado
+                                </span>
+                              )}
+                              {isAdmin(user.email) && (
+                                <span className="protected-badge">🔒 Protegido</span>
+                              )}
+                            </div>
                           </div>
                           {!isAdmin(user.email) && (
                             <div className="user-actions">

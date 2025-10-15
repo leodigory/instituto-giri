@@ -44,37 +44,23 @@ const GoogleCalendarPrompt = ({ userRole }) => {
 
   const handleVincular = async () => {
     try {
-      // Inicializar Google API
-      await googleCalendarService.inicializar();
+      // Salvar preferência no Firebase
+      const usersQuery = query(collection(db, 'users'), where('email', '==', auth.currentUser.email));
+      const snapshot = await getDocs(usersQuery);
       
-      // Fazer login OAuth 2.0 com scope calendar.events
-      const sucesso = await googleCalendarService.login();
-      
-      if (sucesso) {
-        // Salvar no Firebase que o usuário vinculou
-        const usersQuery = query(collection(db, 'users'), where('email', '==', auth.currentUser.email));
-        const snapshot = await getDocs(usersQuery);
-        
-        if (!snapshot.empty) {
-          const userId = snapshot.docs[0].id;
-          await updateDoc(doc(db, 'users', userId), {
-            google_calendar_vinculado: true,
-            google_calendar_data_vinculacao: new Date().toISOString()
-          });
-        }
-        
-        setMostrar(false);
-        alert('✅ Google Calendar vinculado com sucesso! Os eventos serão sincronizados automaticamente.');
-      } else {
-        alert('❌ Vinculação cancelada.');
+      if (!snapshot.empty) {
+        const userId = snapshot.docs[0].id;
+        await updateDoc(doc(db, 'users', userId), {
+          google_calendar_vinculado: true,
+          google_calendar_data_vinculacao: new Date().toISOString()
+        });
       }
+      
+      setMostrar(false);
+      alert('✅ Preferência salva! Você receberá eventos no Google Calendar.');
     } catch (error) {
-      console.error('Erro ao vincular:', error);
-      if (error.message.includes('Credenciais')) {
-        alert('❌ Configuração pendente. Contate o administrador.');
-      } else {
-        alert('❌ Erro ao vincular. Tente novamente.');
-      }
+      console.error('Erro:', error);
+      alert('❌ Erro ao salvar. Tente novamente.');
     }
   };
 

@@ -5,28 +5,124 @@
   padding-bottom: 80px;
 }
 
-.gestao-header {
-  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
-  color: white;
-  padding: var(--space-xl);
-  text-align: center;
-  box-shadow: var(--shadow-md);
-}
-
-.gestao-header h1 {
-  font-size: var(--font-2xl);
-  font-weight: 700;
-  margin: 0 0 var(--space-xs) 0;
-}
-
-.gestao-header p {
-  font-size: var(--font-base);
-  margin: 0;
-  opacity: 0.9;
-}
-
 .gestao-content {
-  padding: var(--space-lg);
-  text-align: center;
+  padding: var(--space-md);
+}
+
+.btn-primary {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.btn-primary:hover {
+  background: #2563eb;
+}
+
+.evento-form {
+  background: var(--card-bg);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.evento-form input,
+.evento-form textarea {
+  padding: 12px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: var(--bg-main);
+  color: var(--text-primary);
+  font-size: 14px;
+}
+
+.evento-form textarea {
+  min-height: 80px;
+  resize: vertical;
+}
+
+.roles-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  align-items: center;
+}
+
+.role-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.btn-success {
+  background: #10b981;
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.btn-success:hover {
+  background: #059669;
+}
+
+.eventos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.evento-card {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 8px;
+  border-left: 4px solid #3b82f6;
+}
+
+.evento-card h3 {
+  margin: 0 0 8px 0;
+  color: var(--text-primary);
+}
+
+.evento-card p {
+  margin: 4px 0;
   color: var(--text-secondary);
+  font-size: 14px;
+}
+
+.evento-data,
+.evento-publico {
+  font-size: 13px;
+  opacity: 0.8;
+}
+
+.evento-actions {
+  display: flex;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.btn-edit,
+.btn-delete {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  padding: 4px 8px;
+}
+
+.btn-edit:hover,
+.btn-delete:hover {
+  opacity: 0.7;
 }

@@ -10,9 +10,18 @@ import { collection, query, where, getDocs } from "firebase/firestore";
 import PromotionsManager from "./PromotionsManager";
 import CanceledSales from "./CanceledSales";
 import UsersManager from "./UsersManager";
+import { useGestao } from "../contexts/GestaoContext";
+import { useNavigate } from "react-router-dom";
 import "./AccountView.css";
 
 const AccountView = () => {
+  const { entrarGestao } = useGestao();
+  const navigate = useNavigate();
+  
+  const handleEntrarGestao = () => {
+    entrarGestao();
+    navigate('/gestao/agenda');
+  };
   const [user, setUser] = useState(null);
   const [userRole, setUserRole] = useState("user");
   const [userStatus, setUserStatus] = useState("approved");
@@ -214,6 +223,14 @@ const AccountView = () => {
           {(userRole === "admin" || userRole === "gerente") && (
             <div className="actions-card">
               <h2 className="actions-title">🛠️ Ações Rápidas</h2>
+              
+              <button className="action-btn gestao" onClick={handleEntrarGestao}>
+                <span className="action-icon">🏢</span>
+                <div className="action-content">
+                  <span className="action-label">Entrar em Gestão do Instituto</span>
+                  <span className="action-description">Acessar módulo de gestão avançada</span>
+                </div>
+              </button>
               
               {userRole === "admin" && (
                 <button className="action-btn primary" onClick={() => setShowUsers(true)}>

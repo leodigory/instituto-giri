@@ -21,11 +21,24 @@ import AccountView from "./components/AccountView";
 import ProgressBar from "./components/ProgressBar";
 import ProtectedRoute from "./components/ProtectedRoute";
 import Ecommerce from "./components/Ecommerce";
+import { GestaoProvider, useGestao } from "./contexts/GestaoContext";
+import { useNavigate } from "react-router-dom";
+import AgendaView from "./components/gestao/AgendaView";
+import ReunioesView from "./components/gestao/ReunioesView";
+import RelatoriosView from "./components/gestao/RelatoriosView";
+import ConfiguracoesView from "./components/gestao/ConfiguracoesView";
 
 function AppContent() {
+  const { modoGestao, sairGestao } = useGestao();
+  const navigate = useNavigate();
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userRole, setUserRole] = useState('user');
   const location = useLocation();
+
+  const handleSairGestao = () => {
+    sairGestao();
+    navigate('/dashboard');
+  };
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
@@ -131,11 +144,95 @@ function AppContent() {
               </ProtectedRoute>
             }
           />
+          
+          {/* Rotas de Gestão */}
+          <Route
+            path="/gestao/agenda"
+            element={
+              <ProtectedRoute>
+                <AgendaView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gestao/reunioes"
+            element={
+              <ProtectedRoute>
+                <ReunioesView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gestao/relatorios"
+            element={
+              <ProtectedRoute>
+                <RelatoriosView />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/gestao/configuracoes"
+            element={
+              <ProtectedRoute>
+                <ConfiguracoesView />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </div>
 
-      {/* Bottom Navigation - sempre visível */}
+      {/* Bottom Navigation - alterna entre padrão e gestão */}
       <nav className="app-nav">
+        {modoGestao ? (
+          /* Nav Bar de Gestão */
+          <>
+            <button
+              onClick={handleSairGestao}
+              className="nav-item"
+            >
+              <span className="nav-icon">⬅️</span>
+              <span className="nav-label">Voltar</span>
+            </button>
+            {(userRole === 'admin' || userRole === 'gerente') && (
+              <NavLink
+                to="/gestao/agenda"
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                <span className="nav-icon">📅</span>
+                <span className="nav-label">Agenda</span>
+              </NavLink>
+            )}
+            {(userRole === 'admin' || userRole === 'gerente' || userRole === 'voluntario') && (
+              <NavLink
+                to="/gestao/reunioes"
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                <span className="nav-icon">🏢</span>
+                <span className="nav-label">Reuniões</span>
+              </NavLink>
+            )}
+            {(userRole === 'admin' || userRole === 'gerente') && (
+              <NavLink
+                to="/gestao/relatorios"
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                <span className="nav-icon">📊</span>
+                <span className="nav-label">Relatórios</span>
+              </NavLink>
+            )}
+            {userRole === 'admin' && (
+              <NavLink
+                to="/gestao/configuracoes"
+                className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+              >
+                <span className="nav-icon">⚙️</span>
+                <span className="nav-label">Config</span>
+              </NavLink>
+            )}
+          </>
+        ) : (
+          /* Nav Bar Padrão */
+          <>
         {/* Botões padrão - apenas se autenticado */}
         {isAuthenticated && (userRole === 'admin' || userRole === 'gerente' || userRole === 'voluntario') && (
           <>
@@ -183,14 +280,16 @@ function AppContent() {
           </NavLink>
         )}
         
-        {/* Botão Conta - sempre visível */}
-        <NavLink
-          to="/conta"
-          className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
-        >
-          <span className="nav-icon">👤</span>
-          <span className="nav-label">Conta</span>
-        </NavLink>
+            {/* Botão Conta - sempre visível */}
+            <NavLink
+              to="/conta"
+              className={({ isActive }) => `nav-item ${isActive ? "active" : ""}`}
+            >
+              <span className="nav-icon">👤</span>
+              <span className="nav-label">Conta</span>
+            </NavLink>
+          </>
+        )}
       </nav>
     </div>
   );
@@ -203,9 +302,11 @@ function App() {
   }, []);
 
   return (
-    <Router>
-      <AppContent />
-    </Router>
+    <GestaoProvider>
+      <Router>
+        <AppContent />
+      </Router>
+    </GestaoProvider>
   );
 }
 

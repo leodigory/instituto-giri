@@ -1,0 +1,32 @@
+.gestao-view {
+  background: var(--bg-main);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding-bottom: 80px;
+}
+
+.gestao-header {
+  background: linear-gradient(135deg, #8b5cf6, #7c3aed);
+  color: white;
+  padding: var(--space-xl);
+  text-align: center;
+  box-shadow: var(--shadow-md);
+}
+
+.gestao-header h1 {
+  font-size: var(--font-2xl);
+  font-weight: 700;
+  margin: 0 0 var(--space-xs) 0;
+}
+
+.gestao-header p {
+  font-size: var(--font-base);
+  margin: 0;
+  opacity: 0.9;
+}
+
+.gestao-content {
+  padding: var(--space-lg);
+  text-align: center;
+  color: var(--text-secondary);
+}

@@ -27,6 +27,7 @@ import AgendaView from "./components/gestao/AgendaView";
 import ReunioesView from "./components/gestao/ReunioesView";
 import RelatoriosView from "./components/gestao/RelatoriosView";
 import ConfiguracoesView from "./components/gestao/ConfiguracoesView";
+import AlertasPopup from "./components/gestao/AlertasPopup";
 
 function AppContent() {
   const { modoGestao, sairGestao } = useGestao();
@@ -64,6 +65,9 @@ function AppContent() {
 
   return (
     <div className="app">
+      {/* Alertas Popup */}
+      {isAuthenticated && <AlertasPopup userRole={userRole} />}
+      
       {/* Top Header - apenas se autenticado */}
       {isAuthenticated && (
         <header className="app-header">

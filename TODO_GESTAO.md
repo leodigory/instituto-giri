@@ -206,7 +206,7 @@ reunioes_realtime/
 
 - [x] `AgendaView.js` - Visualização de eventos com CRUD completo
 - [x] `EventoForm.js` - Formulário de criação/edição de eventos (integrado no AgendaView.js)
-- [ ] `AlertasPopup.js` - Pop-up de notificações segmentadas
+- [x] `AlertasPopup.js` - Pop-up de notificações segmentadas
 
 ### Reuniões
 

@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { agendaService } from '../../services/agendaService';
-import { useAuth } from '../../contexts/AuthContext';
+import { auth } from '../../firebase/config';
 import './GestaoViews.css';
 
 const AgendaView = () => {
-  const { currentUser } = useAuth();
   const [eventos, setEventos] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editando, setEditando] = useState(null);
@@ -21,7 +20,7 @@ const AgendaView = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dados = { ...form, criado_por: currentUser.email };
+    const dados = { ...form, criado_por: auth.currentUser?.email || 'desconhecido' };
     
     if (editando) {
       await agendaService.atualizarEvento(editando, dados);

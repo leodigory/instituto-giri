@@ -14,19 +14,19 @@ O sistema deve implementar uma **troca de contexto de navegação**. Ao invés d
 
 ### Botão de Alternância (Na Aba Conta)
 
-- [ ] Adicionar um botão **"Entrar em Gestão do Instituto"** na aba Conta
-- [ ] **Visibilidade**: Apenas Admin e Gerente
-- [ ] **Ação**: Ao clicar, alterna o estado da aplicação para Modo Gestão, substituindo a Nav Bar Padrão pela Nav Bar de Gestão
+- [x] Adicionar um botão **"Entrar em Gestão do Instituto"** na aba Conta
+- [x] **Visibilidade**: Apenas Admin e Gerente
+- [x] **Ação**: Ao clicar, alterna o estado da aplicação para Modo Gestão, substituindo a Nav Bar Padrão pela Nav Bar de Gestão
 
 ### Nav Bar de Gestão (Rotas e Permissões)
 
 Implementar a nova Nav Bar com as seguintes abas/rotas:
 
-- [ ] **Voltar** (Admin, Gerente): Restaura a Nav Bar e o estado anterior
-- [ ] **Agenda & Alertas** (Admin, Gerente)
-- [ ] **Reuniões** (Admin, Gerente, Voluntário)
-- [ ] **Relatórios** (Admin, Gerente)
-- [ ] **Configurações** (Apenas Admin)
+- [x] **Voltar** (Admin, Gerente): Restaura a Nav Bar e o estado anterior
+- [x] **Agenda & Alertas** (Admin, Gerente)
+- [x] **Reuniões** (Admin, Gerente, Voluntário)
+- [x] **Relatórios** (Admin, Gerente)
+- [x] **Configurações** (Apenas Admin)
 
 ---
 
@@ -198,14 +198,14 @@ reunioes_realtime/
 
 ### Navegação
 
-- [ ] `GestaoNavBar.js` - Nav Bar de Gestão
-- [ ] `GestaoContext.js` - Context para controle de estado do modo gestão
-- [ ] `GestaoToggleButton.js` - Botão de alternância na aba Conta
+- [x] `GestaoNavBar.js` - Nav Bar de Gestão (integrada no App.jsx)
+- [x] `GestaoContext.js` - Context para controle de estado do modo gestão
+- [x] `GestaoToggleButton.js` - Botão de alternância na aba Conta (integrado no AccountView.js)
 
 ### Agenda & Alertas
 
-- [ ] `AgendaView.js` - Visualização de eventos
-- [ ] `EventoForm.js` - Formulário de criação/edição de eventos
+- [x] `AgendaView.js` - Visualização de eventos com CRUD completo
+- [x] `EventoForm.js` - Formulário de criação/edição de eventos (integrado no AgendaView.js)
 - [ ] `AlertasPopup.js` - Pop-up de notificações segmentadas
 
 ### Reuniões
@@ -247,7 +247,7 @@ reunioes_realtime/
 
 ### Firestore Services
 
-- [ ] `agendaService.js` - CRUD de eventos da agenda
+- [x] `agendaService.js` - CRUD de eventos da agenda
 - [ ] `reunioesService.js` - CRUD de reuniões
 - [ ] `relatoriosService.js` - Geração e armazenamento de relatórios
 

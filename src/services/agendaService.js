@@ -15,12 +15,22 @@ export const agendaService = {
 
   // Listar eventos
   async listarEventos(filtroRole = null) {
-    const q = filtroRole 
-      ? query(collection(db, COLLECTION), where('publico_alvo', 'array-contains', filtroRole), orderBy('data_hora', 'asc'))
-      : query(collection(db, COLLECTION), orderBy('data_hora', 'asc'));
+    let q;
+    if (filtroRole) {
+      q = query(collection(db, COLLECTION), where('publico_alvo', 'array-contains', filtroRole));
+    } else {
+      q = query(collection(db, COLLECTION), orderBy('data_hora', 'asc'));
+    }
     
     const snapshot = await getDocs(q);
-    return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    const eventos = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+    
+    // Ordenar manualmente se houver filtro
+    if (filtroRole) {
+      eventos.sort((a, b) => new Date(a.data_hora) - new Date(b.data_hora));
+    }
+    
+    return eventos;
   },
 
   // Atualizar evento

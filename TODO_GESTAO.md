@@ -113,23 +113,25 @@ Desenvolver a página **Sala de Reunião** (acessível via `/reunioes/:id/sala`)
 
 ### Notificações Segmentadas
 
-- [ ] Lógica de Pop-up deve filtrar eventos da coleção `Agenda`
-- [ ] Filtrar onde o Role do usuário (Admin, Gerente, Voluntário, Usuário) está no array `publico_alvo`
+- [x] Lógica de Pop-up deve filtrar eventos da coleção `Agenda`
+- [x] Filtrar onde o Role do usuário (Admin, Gerente, Voluntário, Usuário) está no array `publico_alvo`
+- [x] Controle de exibição: 1x por dia até o evento + 1h antes
+- [x] Notificações do navegador (browser notifications)
 - [ ] **Mensagens Individuais** enviadas apenas pelo Admin
 
 ### Integração Google Calendar (OAuth)
 
 #### Permissão
 
-- [ ] Solicitar permissão de acesso ao Google Calendar via OAuth
-- [ ] Solicitar no primeiro acesso à área de Gestão
+- [x] Solicitar permissão de acesso ao Google Calendar via OAuth
+- [x] Solicitar no primeiro acesso à área de Gestão
 
 #### Automação
 
-- [ ] Eventos criados automaticamente no calendário do Google do usuário
-- [ ] Criar somente se o seu Role for um `publico_alvo`
-- [ ] **Alerta Fixo**: Configurar automaticamente um lembrete (reminder) de **1 hora de antecedência**
-- [ ] Configurar para todos os eventos criados via API
+- [x] Eventos criados automaticamente no calendário do Google do usuário
+- [x] Criar somente se o seu Role for um `publico_alvo`
+- [x] **Alerta Fixo**: Configurar automaticamente um lembrete (reminder) de **1 hora de antecedência**
+- [x] Configurar para todos os eventos criados via API
 
 ---
 
@@ -210,8 +212,8 @@ reunioes_realtime/
 
 ### Reuniões
 
-- [ ] `ReunioesLista.js` - Lista de reuniões
-- [ ] `ReuniaoForm.js` - Formulário de criação de reunião
+- [x] `ReunioesLista.js` - Lista de reuniões (integrado no ReunioesView.js)
+- [x] `ReuniaoForm.js` - Formulário de criação de reunião (integrado no ReunioesView.js)
 - [ ] `SalaReuniao.js` - Sala de reunião em tempo real
 - [ ] `QuorumCheck.js` - Verificação de quórum
 - [ ] `PresencaMarker.js` - Marcação de presença
@@ -238,8 +240,8 @@ reunioes_realtime/
 ### Configurações
 
 - [ ] `ConfiguracoesGestao.js` - Configurações do módulo de gestão
-- [ ] `GoogleCalendarAuth.js` - Autenticação OAuth Google Calendar
-- [ ] `GoogleCalendarSync.js` - Sincronização automática de eventos
+- [x] `GoogleCalendarPrompt.js` - Prompt para vincular Google Calendar
+- [x] `RoleChangePopup.js` - Notificação de mudança de role
 
 ---
 
@@ -248,7 +250,7 @@ reunioes_realtime/
 ### Firestore Services
 
 - [x] `agendaService.js` - CRUD de eventos da agenda
-- [ ] `reunioesService.js` - CRUD de reuniões
+- [x] `reunioesService.js` - CRUD de reuniões
 - [ ] `relatoriosService.js` - Geração e armazenamento de relatórios
 
 ### Realtime Database Services
@@ -262,7 +264,8 @@ reunioes_realtime/
 
 ### Integração Externa
 
-- [ ] `googleCalendarService.js` - Integração com Google Calendar API
+- [x] `googleCalendarService.js` - Integração com Google Calendar API
+- [x] `notificacoesService.js` - Controle de notificações e browser notifications
 - [ ] `exportService.js` - Exportação para CSV/Sheets
 
 ---

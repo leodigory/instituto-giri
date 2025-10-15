@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { agendaService } from '../../services/agendaService';
+import { googleCalendarService } from '../../services/googleCalendarService';
 import { auth } from '../../firebase/config';
 import './GestaoViews.css';
 
@@ -11,27 +12,55 @@ const AgendaView = () => {
 
   useEffect(() => {
     carregarEventos();
+    googleCalendarService.inicializar().catch(err => console.log('Google API não disponível'));
   }, []);
 
   const carregarEventos = async () => {
-    const lista = await agendaService.listarEventos();
-    setEventos(lista);
+    try {
+      const lista = await agendaService.listarEventos();
+      setEventos(lista);
+    } catch (error) {
+      console.error('Erro ao carregar eventos:', error);
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const dados = { ...form, criado_por: auth.currentUser?.email || 'desconhecido' };
-    
-    if (editando) {
-      await agendaService.atualizarEvento(editando, dados);
-    } else {
-      await agendaService.criarEvento(dados);
+    try {
+      const dados = { ...form, criado_por: auth.currentUser?.email || 'desconhecido' };
+      
+      if (editando) {
+        await agendaService.atualizarEvento(editando, dados);
+      } else {
+        const eventoId = await agendaService.criarEvento(dados);
+        
+        // Criar no Google Calendar se houver roles além de 'user'
+        const temOutrosRoles = dados.publico_alvo.some(r => r !== 'user');
+        
+        if (temOutrosRoles) {
+          try {
+            // Tentar criar evento no Google Calendar
+            await googleCalendarService.inicializar();
+            const googleEventId = await googleCalendarService.criarEvento(dados);
+            
+            if (googleEventId) {
+              await agendaService.atualizarEvento(eventoId, { googleEventId });
+              console.log('Evento sincronizado com Google Calendar');
+            }
+          } catch (err) {
+            console.log('Não foi possível sincronizar com Google Calendar:', err.message);
+          }
+        }
+      }
+      
+      setForm({ titulo: '', descricao: '', data_hora: '', publico_alvo: [] });
+      setEditando(null);
+      setShowForm(false);
+      carregarEventos();
+    } catch (error) {
+      console.error('Erro ao salvar evento:', error);
+      alert('Erro ao salvar evento');
     }
-    
-    setForm({ titulo: '', descricao: '', data_hora: '', publico_alvo: [] });
-    setEditando(null);
-    setShowForm(false);
-    carregarEventos();
   };
 
   const handleEditar = (evento) => {
@@ -42,8 +71,24 @@ const AgendaView = () => {
 
   const handleExcluir = async (id) => {
     if (window.confirm('Excluir este evento?')) {
-      await agendaService.excluirEvento(id);
-      carregarEventos();
+      try {
+        const evento = eventos.find(e => e.id === id);
+        
+        // Tentar excluir do Google Calendar
+        if (evento?.googleEventId) {
+          try {
+            await googleCalendarService.excluirEvento(evento.googleEventId);
+          } catch (err) {
+            console.log('Não foi possível excluir do Google Calendar');
+          }
+        }
+        
+        await agendaService.excluirEvento(id);
+        carregarEventos();
+      } catch (error) {
+        console.error('Erro ao excluir evento:', error);
+        alert('Erro ao excluir evento');
+      }
     }
   };
 

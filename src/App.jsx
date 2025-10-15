@@ -28,6 +28,8 @@ import ReunioesView from "./components/gestao/ReunioesView";
 import RelatoriosView from "./components/gestao/RelatoriosView";
 import ConfiguracoesView from "./components/gestao/ConfiguracoesView";
 import AlertasPopup from "./components/gestao/AlertasPopup";
+import RoleChangePopup from "./components/gestao/RoleChangePopup";
+import GoogleCalendarPrompt from "./components/gestao/GoogleCalendarPrompt";
 
 function AppContent() {
   const { modoGestao, sairGestao } = useGestao();
@@ -65,8 +67,14 @@ function AppContent() {
 
   return (
     <div className="app">
-      {/* Alertas Popup */}
-      {isAuthenticated && <AlertasPopup userRole={userRole} />}
+      {/* Notificações */}
+      {isAuthenticated && (
+        <>
+          <RoleChangePopup userRole={userRole} />
+          <GoogleCalendarPrompt userRole={userRole} />
+          <AlertasPopup userRole={userRole} />
+        </>
+      )}
       
       {/* Top Header - apenas se autenticado */}
       {isAuthenticated && (

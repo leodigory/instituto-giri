@@ -119,10 +119,18 @@ const UsersManager = ({ onClose }) => {
     try {
       if (editingUser) {
         // Editar usuário existente
-        await updateDoc(doc(db, "users", editingUser.id), {
+        const updates = {
           name: formData.name,
           role: formData.role,
-        });
+        };
+        
+        // Se mudou o role, resetar flag de notificação
+        if (editingUser.role !== formData.role) {
+          updates.role_notificacao_visualizada = false;
+          updates.role_anterior = editingUser.role;
+        }
+        
+        await updateDoc(doc(db, "users", editingUser.id), updates);
         alert("Usuário atualizado com sucesso!");
       } else {
         // Adicionar novo usuário
